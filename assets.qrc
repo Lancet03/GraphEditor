@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/assets">
+        <file>img/graph.svg</file>
+    </qresource>
+</RCC>
