@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1096</width>
-    <height>574</height>
+    <width>1258</width>
+    <height>646</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,18 +27,11 @@
        <number>0</number>
       </property>
       <widget class="QWidget" name="page">
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
+       <layout class="QGridLayout" name="stackedLayout">
+        <item row="2" column="0">
          <widget class="GraphPlane" name="graphicsView"/>
         </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="page_2">
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0" alignment="Qt::AlignmentFlag::AlignBottom">
+        <item row="1" column="0">
          <widget class="QWidget" name="instrumentsWidget" native="true">
           <property name="minimumSize">
            <size>
@@ -46,12 +39,28 @@
             <height>100</height>
            </size>
           </property>
-          <property name="styleSheet">
-           <string notr="true">border: 1px solid black;
-border-radius: 30px;
-margin: 0 50;
-</string>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>100</height>
+           </size>
           </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QPushButton" name="addEdge">
+             <property name="text">
+              <string>addEdge</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="addVertex">
+             <property name="text">
+              <string>addVertex</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
        </layout>
@@ -65,7 +74,7 @@ margin: 0 50;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1096</width>
+     <width>1258</width>
      <height>21</height>
     </rect>
    </property>

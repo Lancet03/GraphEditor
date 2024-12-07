@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include "adjacencymatrix.h"
+#include <QLabel>
+#include "GraphPlane.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -18,9 +20,17 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void updateMousePosition(const QPointF &pos); // Слот для обновления координат
+    void updateZoomLevel(qreal scale);           // Слот для обновления уровня зума
+    void onMouseEntered(); // Обработка входа курсора в область
+    void onMouseLeft();    // Обработка выхода курсора из области
 
 private:
     Ui::MainWindow *ui;
     AdjacencyMatrix *matrixWindow;
+    GraphPlane *graphPlane; // Виджет с координатной плоскостью
+    QLabel *mousePosLabel;  // Метка для координат
+    QLabel *zoomLevelLabel; // Метка для уровня зума
 };
 #endif // MAINWINDOW_H

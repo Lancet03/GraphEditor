@@ -1,9 +1,13 @@
 #include "GraphPlane.h"
+#include <QPainter>
+#include <QWheelEvent>
+#include <cmath>
 
-GraphPlane::GraphPlane(QWidget *parent) : QGraphicsView(parent)
+GraphPlane::GraphPlane(QWidget *parent) : QGraphicsView(parent), currentScale(1.0)
 {
-    // Создаем сцену и устанавливаем её в QGraphicsView
+    // Создаем сцену (можно задать очень большой прямоугольник, но это не обязательно)
     QGraphicsScene *scene = new QGraphicsScene(this);
+    scene->setSceneRect(-100000, -100000, 200000, 200000); // Огромная сцена
     setScene(scene);
 
     // Настройки для прокрутки и масштабирования
@@ -11,33 +15,100 @@ GraphPlane::GraphPlane(QWidget *parent) : QGraphicsView(parent)
     setDragMode(QGraphicsView::ScrollHandDrag);
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 
-    // Рисуем координатную сетку
-    drawGrid();
+    this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
-void GraphPlane::drawGrid() {
-    int gridSize = 20; // Размер клетки в пикселях
-    int gridCount = 50; // Количество клеток (по полю 1000x1000)
+void GraphPlane::drawBackground(QPainter *painter, const QRectF &rect)
+{
+    painter->save();
 
-    // Горизонтальные линии
-    for (int i = -gridCount; i <= gridCount; ++i) {
-        scene()->addLine(-gridCount * gridSize, i * gridSize, gridCount * gridSize, i * gridSize, QPen(Qt::gray));
+    // Получаем текущий масштаб
+    qreal scale = transform().m11(); // m11 — это масштаб по оси X
+
+    // Размер базовой клетки сетки
+    int baseGridSize = 20;
+
+    // Рассчитываем шаг сетки с учетом текущего масштаба
+    int gridSize = baseGridSize;
+    while (gridSize * scale < 10) {
+        gridSize *= 2; // Увеличиваем шаг, чтобы мелкая сетка исчезала
     }
-    // Вертикальные линии
-    for (int i = -gridCount; i <= gridCount; ++i) {
-        scene()->addLine(i * gridSize, -gridCount * gridSize, i * gridSize, gridCount * gridSize, QPen(Qt::gray));
+    while (gridSize * scale > 100) {
+        gridSize /= 2; // Уменьшаем шаг, чтобы сетка не была слишком редкой
     }
 
-    // Оси X и Y
-    scene()->addLine(-gridCount * gridSize, 0, gridCount * gridSize, 0, QPen(Qt::black, 2));
-    scene()->addLine(0, -gridCount * gridSize, 0, gridCount * gridSize, QPen(Qt::black, 2));
+    // Вычисляем границы видимой области
+    double left = std::floor(rect.left() / gridSize) * gridSize;
+    double right = std::ceil(rect.right() / gridSize) * gridSize;
+    double top = std::floor(rect.top() / gridSize) * gridSize;
+    double bottom = std::ceil(rect.bottom() / gridSize) * gridSize;
+
+    // Рисуем линии сетки
+    QPen gridPen(Qt::gray, 0); // Линии сетки
+    painter->setPen(gridPen);
+
+    // Рисуем вертикальные линии
+    for (double x = left; x <= right; x += gridSize) {
+        painter->drawLine(QLineF(x, top, x, bottom));
+    }
+
+    // Рисуем горизонтальные линии
+    for (double y = top; y <= bottom; y += gridSize) {
+        painter->drawLine(QLineF(left, y, right, y));
+    }
+
+    // Рисуем оси X и Y
+    QPen axisPen(Qt::black, 2);
+    painter->setPen(axisPen);
+    painter->drawLine(QLineF(left, 0, right, 0)); // Ось X
+    painter->drawLine(QLineF(0, top, 0, bottom)); // Ось Y
+
+    painter->restore();
 }
 
-void GraphPlane::wheelEvent (QWheelEvent *event){
+void GraphPlane::wheelEvent(QWheelEvent *event)
+{
     const double scaleFactor = 1.15;
     if (event->angleDelta().y() > 0) {
         scale(scaleFactor, scaleFactor);
+        currentScale *= scaleFactor;
     } else {
         scale(1.0 / scaleFactor, 1.0 / scaleFactor);
+        currentScale /= scaleFactor;
     }
+
+    // Излучаем сигнал об изменении масштаба
+    emit zoomLevelChanged(currentScale);
+
+    // Перерисовываем сцену, чтобы обновить сетку
+    viewport()->update();
+}
+
+void GraphPlane::mouseMoveEvent(QMouseEvent *event)
+{
+    // Получаем позицию курсора в координатах сцены
+    QPointF scenePos = mapToScene(event->pos());
+
+    // Излучаем сигнал с обновленными координатами
+    emit mousePositionChanged(scenePos);
+
+    QGraphicsView::mouseMoveEvent(event);
+}
+
+qreal GraphPlane::getCurrentScale() const
+{
+    return this->currentScale;
+}
+
+void GraphPlane::enterEvent(QEvent *event)
+{
+    QGraphicsView::enterEvent(event);
+    emit mouseEntered(); // Излучаем сигнал о входе
+}
+
+void GraphPlane::leaveEvent(QEvent *event)
+{
+    QGraphicsView::leaveEvent(event);
+    emit mouseLeft(); // Излучаем сигнал о выходе
 }
