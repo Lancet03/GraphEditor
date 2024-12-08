@@ -11,14 +11,19 @@ CONFIG += c++17
 
 SOURCES += \
     Graph.cpp \
+    GraphEdge.cpp \
     GraphPlane.cpp \
+    GraphVertex.cpp \
     adjacencymatrix.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     Graph.h \
+    GraphEdge.h \
     GraphPlane.h \
+    GraphVertex.h \
+    Mode.h \
     adjacencymatrix.h \
     mainwindow.h
 

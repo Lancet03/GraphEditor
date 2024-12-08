@@ -1,10 +1,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+
 #include <QMainWindow>
-#include "adjacencymatrix.h"
 #include <QLabel>
+
 #include "GraphPlane.h"
+#include "adjacencymatrix.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

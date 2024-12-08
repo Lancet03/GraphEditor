@@ -1,14 +1,15 @@
 #include "GraphPlane.h"
 #include <QPainter>
+#include <QGraphicsEllipseItem>
 #include <QWheelEvent>
 #include <cmath>
 
 GraphPlane::GraphPlane(QWidget *parent) : QGraphicsView(parent), currentScale(1.0)
 {
     // Создаем сцену (можно задать очень большой прямоугольник, но это не обязательно)
-    QGraphicsScene *scene = new QGraphicsScene(this);
-    scene->setSceneRect(-100000, -100000, 200000, 200000); // Огромная сцена
-    setScene(scene);
+    this->scene = new QGraphicsScene(this);
+    this->scene->setSceneRect(-100000, -100000, 200000, 200000); // Огромная сцена
+    setScene(this->scene);
 
     // Настройки для прокрутки и масштабирования
     setRenderHint(QPainter::Antialiasing);
@@ -17,6 +18,30 @@ GraphPlane::GraphPlane(QWidget *parent) : QGraphicsView(parent), currentScale(1.
 
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    this->graph = new Graph();
+}
+
+Graph* GraphPlane::SetGraph(Graph* g) {
+    this->graph = g;
+    return g;
+}
+
+void GraphPlane::mousePressEvent(QMouseEvent *event)
+{
+    // Преобразуем координаты клика в координаты сцены
+    QPointF scenePos = mapToScene(event->pos());
+
+    if (event->button() == Qt::LeftButton) {
+        // Создаем кружок радиусом 10 на месте клика
+        QGraphicsEllipseItem *circle = scene->addEllipse(scenePos.x() - 10, scenePos.y() - 10, 20, 20,
+                                                         QPen(Qt::blue), QBrush(Qt::cyan));
+        // Устанавливаем возможность перемещения кружка
+        circle->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+    }
+
+    // Передаем событие базовому классу
+    QGraphicsView::mousePressEvent(event);
 }
 
 void GraphPlane::drawBackground(QPainter *painter, const QRectF &rect)

@@ -7,6 +7,9 @@
 #include <QMouseEvent>
 #include <QPointF>
 
+#include "Graph.h"
+#include "Mode.h"
+
 class GraphPlane : public QGraphicsView
 {
     Q_OBJECT
@@ -16,7 +19,10 @@ public:
 
     // Получение текущего масштаба
     qreal getCurrentScale() const;
-
+    Graph* graph;
+    Graph* SetGraph(Graph* g);
+    void SetMode(Mode m) { this->mode = m; };
+    Mode GetMode(Mode m) { return this->mode; };
 signals:
     void mousePositionChanged(const QPointF &scenePos); // Сигнал для обновления координат
     void zoomLevelChanged(qreal scale);                // Сигнал для изменения масштаба
@@ -29,10 +35,13 @@ protected:
     void wheelEvent(QWheelEvent *event) override;                       // Масштабирование колесом мыши
     void mouseMoveEvent(QMouseEvent *event) override;                   // Отслеживание движения мыши
     void enterEvent(QEvent *event) override;  // Событие входа курсора в область
-    void leaveEvent(QEvent *event) override;  // Событие выхода курсора из области
+    void leaveEvent(QEvent *event) override;  // Событие выхода курсора из област
+    void mousePressEvent(QMouseEvent *event) override; // Обработка кликов мыши
 
 private:
     qreal currentScale; // Текущий уровень масштаба
+    Mode mode;
+    QGraphicsScene *scene; // Сцена для управления объектами
 };
 
 #endif // GRAPHPLANE_H
