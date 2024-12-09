@@ -19,17 +19,24 @@ MainWindow::MainWindow(QWidget *parent)
     QPushButton* addVertexesModeBtn = this->findChild<QPushButton*>("AddVertexes");
     QPushButton* addEdgesModeBtn = this->findChild<QPushButton*>("AddEdges");
     QPushButton* viewModeBtn = this->findChild<QPushButton*>("ViewMode");
+    QPushButton* editModeBtn = this->findChild<QPushButton*>("EditMode");
+    QPushButton* moveModeBtn = this->findChild<QPushButton*>("MoveMode");
 
     // Создаем QButtonGroup и связываем кнопки
     QButtonGroup *buttonGroup = new QButtonGroup(this);
-    buttonGroup->addButton(addVertexesModeBtn, 1); // id = 1
-    buttonGroup->addButton(addEdgesModeBtn, 2); // id = 2
-    buttonGroup->addButton(viewModeBtn, 3); // id = 3
+    buttonGroup->addButton(addVertexesModeBtn, 1);
+    buttonGroup->addButton(addEdgesModeBtn, 2);
+    buttonGroup->addButton(viewModeBtn, 3);
+    buttonGroup->addButton(editModeBtn, 4);
+    buttonGroup->addButton(moveModeBtn, 5);
+
 
     // Устанавливаем checkable для кнопок
     addVertexesModeBtn->setCheckable(true);
     addEdgesModeBtn->setCheckable(true);
     viewModeBtn->setCheckable(true);
+    editModeBtn->setCheckable(true);
+    moveModeBtn->setCheckable(true);
 
     viewModeBtn->setChecked(true);
 
@@ -87,12 +94,28 @@ void MainWindow::on_ViewMode_toggled(bool checked)
 void MainWindow::on_AddVertexes_toggled(bool checked)
 {
     qDebug() << "AddVertexMode";
-    // this->graphPlane->SetMode(Mode:);
+    this->graphPlane->SetMode(Mode::ADD_VERTEXES);
 }
 
 
 void MainWindow::on_AddEdges_toggled(bool checked)
 {
     qDebug() << "AddEdgeMode";
+    this->graphPlane->SetMode(Mode::ADD_EDGES);
+}
+
+
+
+void MainWindow::on_EditMode_toggled(bool checked)
+{
+    qDebug() << "EditMode";
+    this->graphPlane->SetMode(Mode::EDIT);
+}
+
+
+void MainWindow::on_MoveMode_toggled(bool checked)
+{
+    qDebug() << "Move";
+    this->graphPlane->SetMode(Mode::MOVE);
 }
 

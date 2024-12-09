@@ -6,7 +6,7 @@ enum Mode {
     EDIT,
     ADD_VERTEXES,
     ADD_EDGES,
-    DELETE
+    MOVE
 };
 
 #endif // MODE_H

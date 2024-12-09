@@ -1,9 +1,9 @@
 #include "GraphVertex.h"
 
-// GraphVertex::GraphVertex(double x, double y) {
-//     this->xPos = x;
-//     this->yPos = y;
-// }
+GraphVertex::GraphVertex(double x, double y) {
+    this->xPos = x;
+    this->yPos = y;
+}
 
 GraphVertex::GraphVertex(const std::shared_ptr<GraphVertex>& vertex) {
     this->xPos = vertex->xPos;

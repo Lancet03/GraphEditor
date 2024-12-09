@@ -7,7 +7,7 @@ class GraphVertex
 {
 public:
     // GraphVertex(double x, double y);
-    GraphVertex(double x, double y) : xPos(x), yPos(y) {}
+    GraphVertex(double x, double y);
     GraphVertex(const std::shared_ptr<GraphVertex>& vertex);
 
     int id;

@@ -35,6 +35,10 @@ private slots:
 
     void on_AddEdges_toggled(bool checked);
 
+    void on_EditMode_toggled(bool checked);
+
+    void on_MoveMode_toggled(bool checked);
+
 private:
     Ui::MainWindow *ui;
     AdjacencyMatrix *matrixWindow;

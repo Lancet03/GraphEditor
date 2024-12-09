@@ -31,7 +31,7 @@
         <item row="2" column="0">
          <widget class="GraphPlane" name="graphicsView"/>
         </item>
-        <item row="1" column="0" alignment="Qt::AlignmentFlag::AlignLeft">
+        <item row="1" column="0">
          <widget class="QWidget" name="instrumentsWidget" native="true">
           <property name="minimumSize">
            <size>
@@ -100,6 +100,44 @@
              </property>
              <property name="text">
               <string>viewMode</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="EditMode">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>80</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>100</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>EditMode</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="MoveMode">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>80</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>100</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>MoveMode</string>
              </property>
             </widget>
            </item>

@@ -3,6 +3,7 @@
 #include <QPainter>
 #include <QGraphicsEllipseItem>
 #include <QWheelEvent>
+#include <QDebug>
 
 #include <cmath>
 #include <typeinfo>
@@ -41,24 +42,35 @@ void GraphPlane::mousePressEvent(QMouseEvent *event)
         QGraphicsItem *item = scene->itemAt(scenePos, QTransform());
 
         if (item && item->data(0).toString() == "VertexCircle") {
-            if (!this->firstSelectedCircle) {
-                firstSelectedCircle = dynamic_cast<VertexCircle*>(item);
-                firstSelectedCircle->setPen(QPen(Qt::green, 3));
-            } else if (!secondSelectedCircle) {
-                secondSelectedCircle = dynamic_cast<VertexCircle *>(item);
-                secondSelectedCircle->setPen(QPen(Qt::green, 3)); // Указываем, что кружок выбран
+            VertexCircle* selectedVertex = dynamic_cast<VertexCircle*>(item);
+            if (this->mode == Mode::MOVE) {
+                selectedVertex->setMovable(true);
+                this->selectedCircle = selectedVertex;
+            } else if (this->mode == Mode::EDIT) {
+                // Включаем режим изменения радиуса
+                qDebug() << "Edit";
+                this->selectedCircle = selectedVertex;
+            } else if (this->mode == Mode::ADD_EDGES) {
+                if (!this->firstSelectedCircle) {
+                    firstSelectedCircle = selectedVertex;
+                    firstSelectedCircle->setPen(QPen(Qt::green, 3));
+                } else if (!secondSelectedCircle) {
+                    secondSelectedCircle = selectedVertex;
+                    secondSelectedCircle->setPen(QPen(Qt::green, 3)); // Указываем, что кружок выбран
 
-                // Соединяем два выбранных кружка
-                connectCircles();
+                    // Соединяем два выбранных кружка
+                    connectCircles();
 
-                // Сбрасываем выбор
-                firstSelectedCircle->setPen(QPen(Qt::blue, 2));
-                secondSelectedCircle->setPen(QPen(Qt::blue, 2));
-                firstSelectedCircle = nullptr;
-                secondSelectedCircle = nullptr;
+                    // Сбрасываем выбор
+                    firstSelectedCircle->setPen(QPen(Qt::blue, 2));
+                    secondSelectedCircle->setPen(QPen(Qt::blue, 2));
+                    firstSelectedCircle = nullptr;
+                    secondSelectedCircle = nullptr;
+                }
             }
-        } else {
-            VertexCircle *circle = new VertexCircle(scenePos.x() - 10, scenePos.y() - 10, 20, 20);
+        } else if (this->mode == Mode::ADD_VERTEXES) {
+            qDebug() << "Add vertex";
+            VertexCircle *circle = new VertexCircle(scenePos.x() - 10, scenePos.y() - 10, 20);
             circle->setData(0, "VertexCircle");
             scene->addItem(circle); // Добавляем в сцену
         }
@@ -180,6 +192,20 @@ void GraphPlane::mouseMoveEvent(QMouseEvent *event)
     // Излучаем сигнал с обновленными координатами
     emit mousePositionChanged(scenePos);
 
+    if (this->selectedCircle && this->mode == Mode::EDIT) {
+        QPointF scenePos = mapToScene(event->pos());
+
+        // Вычисляем новый радиус как расстояние между центром и текущей позицией мыши
+        QPointF center = this->selectedCircle->sceneBoundingRect().center();
+        qreal newRadius = std::hypot(scenePos.x() - center.x(), scenePos.y() - center.y());
+
+        // Устанавливаем минимальный радиус, чтобы вершина не исчезала
+        newRadius = std::max(newRadius, 5.0);
+
+        // Обновляем радиус вершины
+        this->selectedCircle->setRadius(newRadius);
+    }
+
     QGraphicsView::mouseMoveEvent(event);
 }
 
@@ -190,7 +216,6 @@ qreal GraphPlane::getCurrentScale() const
 
 void GraphPlane::mouseReleaseEvent(QMouseEvent *event)
 {
-
     if (event->button() == Qt::MiddleButton)
     {
         //отпускаем левую кнопку мыши которую виртуально зажали в mousePressEvent
@@ -203,6 +228,12 @@ void GraphPlane::mouseReleaseEvent(QMouseEvent *event)
         QGraphicsView::mouseReleaseEvent(&fakeEvent);
 
         setDragMode(QGraphicsView::NoDrag);
+    } else if (event->button() == Qt::LeftButton && this->selectedCircle) {
+        if (this->mode == Mode::MOVE) {
+            this->selectedCircle->setMovable(false);
+        }
+
+        this->selectedCircle = nullptr;
     }
 
     QGraphicsView::mouseReleaseEvent(event); // Передаём событие базовому классу

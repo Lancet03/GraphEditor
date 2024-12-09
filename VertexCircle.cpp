@@ -3,13 +3,29 @@
 #include <QStyleOptionGraphicsItem>
 
 
-VertexCircle::VertexCircle(qreal x, qreal y, qreal width, qreal height, QGraphicsItem *parent)
-    : QGraphicsEllipseItem(x, y, width, height, parent)
+VertexCircle::VertexCircle(qreal x, qreal y, qreal radius, QGraphicsItem *parent)
+    : QGraphicsEllipseItem(parent), m_radius(radius)
 {
+
+    // Устанавливаем начальные параметры
+    setRect(x - radius, y - radius, 2 * radius, 2 * radius);
     // Устанавливаем базовый стиль
     setPen(QPen(Qt::blue, 2));
     setBrush(QBrush(Qt::cyan));
-    setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+    setFlags(QGraphicsItem::ItemIsSelectable);
+}
+
+qreal VertexCircle::getRadius() const
+{
+    return m_radius;
+}
+
+
+void VertexCircle::setRadius(qreal radius)
+{
+    m_radius = radius;
+    // Обновляем размер круга
+    setRect(rect().center().x() - radius, rect().center().y() - radius, 2 * radius, 2 * radius);
 }
 
 void VertexCircle::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -26,6 +42,14 @@ void VertexCircle::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     setPen(QPen(Qt::blue, 2));
     setBrush(QBrush(Qt::cyan));
     QGraphicsEllipseItem::mouseReleaseEvent(event); // Передаём управление базовому классу
+}
+
+void VertexCircle::setMovable(bool movable) {
+    if (movable) {
+        setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+    } else {
+        setFlags(QGraphicsItem::ItemIsSelectable); // Только выделение
+    }
 }
 
 void VertexCircle::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)

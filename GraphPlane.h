@@ -48,6 +48,8 @@ private:
     VertexCircle *firstSelectedCircle = nullptr;  // Первый выбранный кружок
     VertexCircle *secondSelectedCircle = nullptr; // Второй выбранный кружок
 
+    VertexCircle* selectedCircle = nullptr;
+
     bool isDragging = false;         // Флаг режима перетаскивания
     QPoint lastMousePos;             // Последняя позиция мыши
 
