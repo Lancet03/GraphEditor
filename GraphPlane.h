@@ -47,6 +47,7 @@ private:
     QGraphicsScene *scene; // Сцена для управления объектами
     VertexCircle *firstSelectedCircle = nullptr;  // Первый выбранный кружок
     VertexCircle *secondSelectedCircle = nullptr; // Второй выбранный кружок
+    QGraphicsLineItem *tempLine = nullptr;        // Временная линия
 
     VertexCircle* selectedCircle = nullptr;
 
@@ -54,6 +55,7 @@ private:
     QPoint lastMousePos;             // Последняя позиция мыши
 
     void connectCircles(); // Метод для соединения кружков линией
+    void updateEdge(GraphEdge &edge); // Метод для обновления линии
 };
 
 #endif // GRAPHPLANE_H

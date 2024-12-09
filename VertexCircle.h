@@ -6,12 +6,15 @@
 #include <QBrush>
 #include <QPainter>
 
+#include "GraphVertex.h"
+
 class VertexCircle : public QGraphicsEllipseItem
 {
 public:
     explicit VertexCircle(qreal x, qreal y, qreal radius, QGraphicsItem *parent = nullptr);
     // Метод для изменения радиуса
     void setRadius(qreal radius);
+    GraphVertex* vertex;
 
     // Получение текущего радиуса
     qreal getRadius() const;
@@ -20,6 +23,8 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override; // Начало перемещения
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override; // Завершение перемещения
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override; // Кастомная отрисовка
+protected:
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
 private:
     qreal m_radius; // Радиус круга

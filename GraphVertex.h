@@ -14,7 +14,7 @@ public:
     std::string name;
     double xPos;
     double yPos;
-    double radius = 1;
+    double radius = 20;
 
     void MoveTo(double x, double y);
     bool CheckIfInRadius(double x, double y);

@@ -10,6 +10,13 @@ std::shared_ptr<GraphVertex> Graph::addVertex(double xPos, double yPos) {
     return vetrex;
 }
 
+std::shared_ptr<GraphVertex> Graph::addVertex(GraphVertex* vertex) {
+    std::shared_ptr<GraphVertex> vertex_sptr(vertex);
+    this->vertexes.push_back(vertex_sptr);
+
+    return vertex_sptr;
+}
+
 void Graph::PrintCorrespMatrix() {
     std::vector<std::vector<double>> matrix = this->BuildCorrespMatrix();
 

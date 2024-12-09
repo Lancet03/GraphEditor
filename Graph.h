@@ -18,6 +18,7 @@ public:
     std::vector<std::vector<double>> BuildCorrespMatrix();
     std::shared_ptr<GraphVertex> getVertexByPos(double x, double y);
     std::shared_ptr<GraphVertex> addVertex(double xPos, double yPos);
+    std::shared_ptr<GraphVertex> addVertex(GraphVertex*);
 
 private:
     double GetEdgeWeigth(std::shared_ptr<GraphVertex> from, std::shared_ptr<GraphVertex> to);

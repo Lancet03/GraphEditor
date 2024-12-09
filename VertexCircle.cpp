@@ -1,11 +1,14 @@
 #include "VertexCircle.h"
 #include <QGraphicsSceneMouseEvent>
 #include <QStyleOptionGraphicsItem>
+#include <QDebug>
 
 
 VertexCircle::VertexCircle(qreal x, qreal y, qreal radius, QGraphicsItem *parent)
     : QGraphicsEllipseItem(parent), m_radius(radius)
 {
+    this->vertex = new GraphVertex(x, y);
+    this->vertex->radius = radius;
 
     // Устанавливаем начальные параметры
     setRect(x - radius, y - radius, 2 * radius, 2 * radius);
@@ -23,9 +26,28 @@ qreal VertexCircle::getRadius() const
 
 void VertexCircle::setRadius(qreal radius)
 {
+    qDebug() << "Vertex radius changed " << radius;
+    this->vertex->radius = radius;
+
     m_radius = radius;
     // Обновляем размер круга
     setRect(rect().center().x() - radius, rect().center().y() - radius, 2 * radius, 2 * radius);
+}
+
+QVariant VertexCircle::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    qDebug() << "Vertex  > value changed >" << change;
+    // Проверяем, изменяется ли позиция объекта
+    if (change == QGraphicsItem::ItemPositionChange) {
+        QPointF point = value.toPointF();
+        this->vertex->xPos = point.x();
+        this->vertex->yPos = point.y();
+        qDebug() << "Vertex > position changed > " << this->vertex->xPos << " " << this->vertex->yPos;
+
+        // emit positionChanged(value.toPointF()); // Излучаем сигнал с новой позицией
+    }
+
+    return QGraphicsEllipseItem::itemChange(change, value);
 }
 
 void VertexCircle::mousePressEvent(QGraphicsSceneMouseEvent *event)

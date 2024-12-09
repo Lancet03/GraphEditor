@@ -73,6 +73,7 @@ void GraphPlane::mousePressEvent(QMouseEvent *event)
             VertexCircle *circle = new VertexCircle(scenePos.x() - 10, scenePos.y() - 10, 20);
             circle->setData(0, "VertexCircle");
             scene->addItem(circle); // Добавляем в сцену
+            this->graph->addVertex(circle->vertex);
         }
     } else if (event->button() == Qt::RightButton) {
         // Проверяем, есть ли объект под курсором
@@ -192,19 +193,27 @@ void GraphPlane::mouseMoveEvent(QMouseEvent *event)
     // Излучаем сигнал с обновленными координатами
     emit mousePositionChanged(scenePos);
 
-    if (this->selectedCircle && this->mode == Mode::EDIT) {
-        QPointF scenePos = mapToScene(event->pos());
+    if (this->selectedCircle) {
+        if (this->mode == Mode::EDIT) {
+            QPointF scenePos = mapToScene(event->pos());
 
-        // Вычисляем новый радиус как расстояние между центром и текущей позицией мыши
-        QPointF center = this->selectedCircle->sceneBoundingRect().center();
-        qreal newRadius = std::hypot(scenePos.x() - center.x(), scenePos.y() - center.y());
+            // Вычисляем новый радиус как расстояние между центром и текущей позицией мыши
+            QPointF center = this->selectedCircle->sceneBoundingRect().center();
+            qreal newRadius = std::hypot(scenePos.x() - center.x(), scenePos.y() - center.y());
 
-        // Устанавливаем минимальный радиус, чтобы вершина не исчезала
-        newRadius = std::max(newRadius, 5.0);
+            // Устанавливаем минимальный радиус, чтобы вершина не исчезала
+            newRadius = std::max(newRadius, 5.0);
 
-        // Обновляем радиус вершины
-        this->selectedCircle->setRadius(newRadius);
+            // Обновляем радиус вершины
+            this->selectedCircle->setRadius(newRadius);
+        }
+        else if (this->mode == Mode::MOVE) {
+            QPoint p = event->pos();
+            this->selectedCircle->vertex->MoveTo(p.x(), p.y());
+        }
+
     }
+
 
     QGraphicsView::mouseMoveEvent(event);
 }
@@ -230,6 +239,8 @@ void GraphPlane::mouseReleaseEvent(QMouseEvent *event)
         setDragMode(QGraphicsView::NoDrag);
     } else if (event->button() == Qt::LeftButton && this->selectedCircle) {
         if (this->mode == Mode::MOVE) {
+            QPoint p = event->pos();
+            this->selectedCircle->vertex->MoveTo(p.x(), p.y());
             this->selectedCircle->setMovable(false);
         }
 
