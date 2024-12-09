@@ -14,6 +14,7 @@ SOURCES += \
     GraphEdge.cpp \
     GraphPlane.cpp \
     GraphVertex.cpp \
+    VertexCircle.cpp \
     adjacencymatrix.cpp \
     main.cpp \
     mainwindow.cpp
@@ -24,6 +25,7 @@ HEADERS += \
     GraphPlane.h \
     GraphVertex.h \
     Mode.h \
+    VertexCircle.h \
     adjacencymatrix.h \
     mainwindow.h
 

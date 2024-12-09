@@ -1,8 +1,11 @@
 #include "GraphPlane.h"
+#include "VertexCircle.h"
 #include <QPainter>
 #include <QGraphicsEllipseItem>
 #include <QWheelEvent>
+
 #include <cmath>
+#include <typeinfo>
 
 GraphPlane::GraphPlane(QWidget *parent) : QGraphicsView(parent), currentScale(1.0)
 {
@@ -13,11 +16,13 @@ GraphPlane::GraphPlane(QWidget *parent) : QGraphicsView(parent), currentScale(1.
 
     // Настройки для прокрутки и масштабирования
     setRenderHint(QPainter::Antialiasing);
-    setDragMode(QGraphicsView::ScrollHandDrag);
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+    setDragMode(QGraphicsView::NoDrag);
 
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+
 
     this->graph = new Graph();
 }
@@ -33,15 +38,72 @@ void GraphPlane::mousePressEvent(QMouseEvent *event)
     QPointF scenePos = mapToScene(event->pos());
 
     if (event->button() == Qt::LeftButton) {
-        // Создаем кружок радиусом 10 на месте клика
-        QGraphicsEllipseItem *circle = scene->addEllipse(scenePos.x() - 10, scenePos.y() - 10, 20, 20,
-                                                         QPen(Qt::blue), QBrush(Qt::cyan));
-        // Устанавливаем возможность перемещения кружка
-        circle->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+        QGraphicsItem *item = scene->itemAt(scenePos, QTransform());
+
+        if (item && item->data(0).toString() == "VertexCircle") {
+            if (!this->firstSelectedCircle) {
+                firstSelectedCircle = dynamic_cast<VertexCircle*>(item);
+                firstSelectedCircle->setPen(QPen(Qt::green, 3));
+            } else if (!secondSelectedCircle) {
+                secondSelectedCircle = dynamic_cast<VertexCircle *>(item);
+                secondSelectedCircle->setPen(QPen(Qt::green, 3)); // Указываем, что кружок выбран
+
+                // Соединяем два выбранных кружка
+                connectCircles();
+
+                // Сбрасываем выбор
+                firstSelectedCircle->setPen(QPen(Qt::blue, 2));
+                secondSelectedCircle->setPen(QPen(Qt::blue, 2));
+                firstSelectedCircle = nullptr;
+                secondSelectedCircle = nullptr;
+            }
+        } else {
+            VertexCircle *circle = new VertexCircle(scenePos.x() - 10, scenePos.y() - 10, 20, 20);
+            circle->setData(0, "VertexCircle");
+            scene->addItem(circle); // Добавляем в сцену
+        }
+    } else if (event->button() == Qt::RightButton) {
+        // Проверяем, есть ли объект под курсором
+        QGraphicsItem *item = scene->itemAt(scenePos, QTransform());
+        if (item->data(0).toString() == "VertexCircle") {
+            scene->removeItem(item);
+            delete item;
+        }
+    } else if (event->button() == Qt::MiddleButton) {
+        this->isDragging = true;
+        // по нажатию средней кнопки мыши создаем событие ее отпускания выставляем моду перетаскивания и создаем событие зажатой левой кнопки мыши
+        QMouseEvent releaseEvent(QEvent::MouseButtonRelease,
+                                 event->localPos(),
+                                 event->screenPos(),
+                                 event->windowPos(),
+                                 Qt::LeftButton, nullptr,
+                                 event->modifiers());
+
+        QGraphicsView::mouseReleaseEvent(&releaseEvent);
+
+        setDragMode(QGraphicsView::ScrollHandDrag);
+
+        QMouseEvent fakeEvent(event->type(), event->localPos(), event->screenPos(),event->windowPos(),Qt::LeftButton, event->buttons() | Qt::LeftButton, event->modifiers());
+
+        QGraphicsView::mousePressEvent(&fakeEvent);
     }
 
     // Передаем событие базовому классу
     QGraphicsView::mousePressEvent(event);
+}
+
+void GraphPlane::connectCircles()
+{
+    if (firstSelectedCircle && secondSelectedCircle) {
+        // Получаем центры кружков
+        QPointF firstCenter = firstSelectedCircle->sceneBoundingRect().center();
+        QPointF secondCenter = secondSelectedCircle->sceneBoundingRect().center();
+
+        // Создаем линию между центрами кружков
+        QGraphicsLineItem *line = scene->addLine(QLineF(firstCenter, secondCenter), QPen(Qt::black, 2));
+
+        // Линия добавлена в сцену
+    }
 }
 
 void GraphPlane::drawBackground(QPainter *painter, const QRectF &rect)
@@ -124,6 +186,26 @@ void GraphPlane::mouseMoveEvent(QMouseEvent *event)
 qreal GraphPlane::getCurrentScale() const
 {
     return this->currentScale;
+}
+
+void GraphPlane::mouseReleaseEvent(QMouseEvent *event)
+{
+
+    if (event->button() == Qt::MiddleButton)
+    {
+        //отпускаем левую кнопку мыши которую виртуально зажали в mousePressEvent
+        QMouseEvent fakeEvent(event->type(), event->localPos(), event->screenPos(),
+                              event->windowPos(),
+                              Qt::LeftButton,
+                              event->buttons() & ~Qt::LeftButton,
+                              event->modifiers());
+
+        QGraphicsView::mouseReleaseEvent(&fakeEvent);
+
+        setDragMode(QGraphicsView::NoDrag);
+    }
+
+    QGraphicsView::mouseReleaseEvent(event); // Передаём событие базовому классу
 }
 
 void GraphPlane::enterEvent(QEvent *event)

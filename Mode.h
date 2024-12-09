@@ -3,7 +3,9 @@
 
 enum Mode {
     VIEW,
-    MOVE_VERTEX,
+    EDIT,
+    ADD_VERTEXES,
+    ADD_EDGES,
     DELETE
 };
 

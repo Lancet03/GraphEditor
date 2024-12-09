@@ -29,6 +29,12 @@ private slots:
     void onMouseEntered(); // Обработка входа курсора в область
     void onMouseLeft();    // Обработка выхода курсора из области
 
+    void on_ViewMode_toggled(bool checked);
+
+    void on_AddVertexes_toggled(bool checked);
+
+    void on_AddEdges_toggled(bool checked);
+
 private:
     Ui::MainWindow *ui;
     AdjacencyMatrix *matrixWindow;

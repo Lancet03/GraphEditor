@@ -31,7 +31,7 @@
         <item row="2" column="0">
          <widget class="GraphPlane" name="graphicsView"/>
         </item>
-        <item row="1" column="0">
+        <item row="1" column="0" alignment="Qt::AlignmentFlag::AlignLeft">
          <widget class="QWidget" name="instrumentsWidget" native="true">
           <property name="minimumSize">
            <size>
@@ -47,16 +47,59 @@
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
-            <widget class="QPushButton" name="addEdge">
+            <widget class="QPushButton" name="AddEdges">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>80</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>100</width>
+               <height>16777215</height>
+              </size>
+             </property>
              <property name="text">
               <string>addEdge</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="addVertex">
+            <widget class="QPushButton" name="AddVertexes">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>80</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>100</width>
+               <height>16777215</height>
+              </size>
+             </property>
              <property name="text">
               <string>addVertex</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="ViewMode">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>80</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>100</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>viewMode</string>
              </property>
             </widget>
            </item>

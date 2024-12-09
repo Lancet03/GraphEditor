@@ -4,6 +4,7 @@
 #include <QPixmap>
 #include <QLabel>
 #include <QDebug>
+#include <QButtonGroup>
 
 #include "GraphPlane.h"
 
@@ -14,6 +15,23 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     this->graphPlane = this->findChild<GraphPlane*>("graphicsView");
+
+    QPushButton* addVertexesModeBtn = this->findChild<QPushButton*>("AddVertexes");
+    QPushButton* addEdgesModeBtn = this->findChild<QPushButton*>("AddEdges");
+    QPushButton* viewModeBtn = this->findChild<QPushButton*>("ViewMode");
+
+    // Создаем QButtonGroup и связываем кнопки
+    QButtonGroup *buttonGroup = new QButtonGroup(this);
+    buttonGroup->addButton(addVertexesModeBtn, 1); // id = 1
+    buttonGroup->addButton(addEdgesModeBtn, 2); // id = 2
+    buttonGroup->addButton(viewModeBtn, 3); // id = 3
+
+    // Устанавливаем checkable для кнопок
+    addVertexesModeBtn->setCheckable(true);
+    addEdgesModeBtn->setCheckable(true);
+    viewModeBtn->setCheckable(true);
+
+    viewModeBtn->setChecked(true);
 
     // Создаем метки для отображения данных
     mousePosLabel = new QLabel("Cursor: (0, 0)", this);
@@ -58,3 +76,23 @@ void MainWindow::onMouseLeft()
     mousePosLabel->setText("");
     zoomLevelLabel->setText("");
 }
+
+void MainWindow::on_ViewMode_toggled(bool checked)
+{
+    qDebug() << "ViewMode";
+    this->graphPlane->SetMode(Mode::VIEW);
+}
+
+
+void MainWindow::on_AddVertexes_toggled(bool checked)
+{
+    qDebug() << "AddVertexMode";
+    // this->graphPlane->SetMode(Mode:);
+}
+
+
+void MainWindow::on_AddEdges_toggled(bool checked)
+{
+    qDebug() << "AddEdgeMode";
+}
+
