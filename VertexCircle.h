@@ -8,6 +8,7 @@
 #include <QPainter>
 
 #include "GraphVertex.h"
+#include "EdgeLine.h"
 
 class VertexCircle : public QObject, public QGraphicsEllipseItem
 {
@@ -23,8 +24,12 @@ public:
     qreal getRadius() const;
     void setMovable(bool movable);
     void moveTo(QPoint point);
-signals:
-    void positionChanged(const QPointF &newPosition);
+
+    void addEdge(EdgeLine* edge);
+    void removeEdge(EdgeLine* edge);
+    const QList<EdgeLine*>& getEdges() const;
+
+    void removeSelf();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override; // Начало перемещения
@@ -36,6 +41,7 @@ protected:
 
 private:
     qreal m_radius; // Радиус круга
+    QList<EdgeLine*> edges; // Список линий, связанных с этим кружком
 };
 
 #endif // VERTEXCIRCLE_H

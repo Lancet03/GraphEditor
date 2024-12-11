@@ -2,7 +2,8 @@
 #define EDGELINE_H
 
 #include <QGraphicsLineItem>
-#include "VertexCircle.h" // Класс кружка
+
+class VertexCircle;
 
 class EdgeLine : public QObject, public QGraphicsLineItem
 {
@@ -13,6 +14,8 @@ public:
 
     // Обновить линию в соответствии с текущими позициями кружков
     void updatePosition();
+    void removeSelf(); // Удаляет связь между линией и кружками
+
 
 private:
     VertexCircle *startVertex; // Начальный кружок

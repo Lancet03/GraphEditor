@@ -2,7 +2,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QStyleOptionGraphicsItem>
 #include <QDebug>
-
+#include <QGraphicsScene>
 
 VertexCircle::VertexCircle(qreal x, qreal y, qreal radius, QGraphicsItem *parent)
     : QGraphicsEllipseItem(parent), m_radius(radius)
@@ -16,11 +16,28 @@ VertexCircle::VertexCircle(qreal x, qreal y, qreal radius, QGraphicsItem *parent
     setPen(QPen(Qt::blue, 2));
     setBrush(QBrush(Qt::cyan));
     setFlags(QGraphicsItem::ItemIsSelectable);
+    this->setData(0, "VertexCircle");
 }
 
 qreal VertexCircle::getRadius() const
 {
     return m_radius;
+}
+
+void VertexCircle::removeSelf() {
+    // // Delete detached lines
+    // for (EdgeLine* edge : this->edges) {
+    //     edge->removeSelf();
+    // }
+    while (this->edges.size()) {
+        this->edges[0]->removeSelf();
+    }
+
+    // Удаляем саму линию из сцены
+    if (scene()) {
+        scene()->removeItem(this);
+    }
+    delete this;
 }
 
 
@@ -50,6 +67,20 @@ void VertexCircle::setRadius(qreal radius)
 //     return QGraphicsEllipseItem::itemChange(change, value);
 // }
 
+void VertexCircle::addEdge(EdgeLine* edge) {
+    if (!edges.contains(edge)) {
+        edges.append(edge);
+    }
+}
+
+void VertexCircle::removeEdge(EdgeLine* edge) {
+    edges.removeAll(edge);
+}
+
+const QList<EdgeLine*>& VertexCircle::getEdges() const {
+    return edges;
+}
+
 void VertexCircle::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     // Изменяем стиль при начале перемещения
@@ -76,7 +107,9 @@ void VertexCircle::setMovable(bool movable) {
 
 void VertexCircle::moveTo(QPoint point) {
     this->vertex->MoveTo(point.x(), point.y());
-    emit positionChanged(point);
+    for (int i = 0; i < this->edges.count(); i++) {
+        this->edges[i]->updatePosition();
+    }
 }
 
 void VertexCircle::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)

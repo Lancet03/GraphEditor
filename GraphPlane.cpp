@@ -71,9 +71,7 @@ void GraphPlane::mousePressEvent(QMouseEvent *event)
                 }
             }
         } else if (this->mode == Mode::ADD_VERTEXES) {
-            qDebug() << "Add vertex";
             VertexCircle *circle = new VertexCircle(scenePos.x() - 10, scenePos.y() - 10, 20);
-            circle->setData(0, "VertexCircle");
             scene->addItem(circle); // Добавляем в сцену
             this->graph->addVertex(circle->vertex);
         }
@@ -81,8 +79,8 @@ void GraphPlane::mousePressEvent(QMouseEvent *event)
         // Проверяем, есть ли объект под курсором
         QGraphicsItem *item = scene->itemAt(scenePos, QTransform());
         if (item->data(0).toString() == "VertexCircle") {
-            scene->removeItem(item);
-            delete item;
+            VertexCircle* vertex = dynamic_cast<VertexCircle*>(item);
+            vertex->removeSelf();
         }
     } else if (event->button() == Qt::MiddleButton) {
         this->isDragging = true;
