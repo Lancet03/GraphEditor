@@ -1,6 +1,7 @@
 #ifndef VERTEXCIRCLE_H
 #define VERTEXCIRCLE_H
 
+#include <QObject>
 #include <QGraphicsEllipseItem>
 #include <QPen>
 #include <QBrush>
@@ -8,8 +9,10 @@
 
 #include "GraphVertex.h"
 
-class VertexCircle : public QGraphicsEllipseItem
+class VertexCircle : public QObject, public QGraphicsEllipseItem
 {
+    Q_OBJECT
+
 public:
     explicit VertexCircle(qreal x, qreal y, qreal radius, QGraphicsItem *parent = nullptr);
     // Метод для изменения радиуса
@@ -19,16 +22,20 @@ public:
     // Получение текущего радиуса
     qreal getRadius() const;
     void setMovable(bool movable);
+    void moveTo(QPoint point);
+signals:
+    void positionChanged(const QPointF &newPosition);
+
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override; // Начало перемещения
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override; // Завершение перемещения
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override; // Кастомная отрисовка
-protected:
-    QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+    // QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
+
+
 
 private:
     qreal m_radius; // Радиус круга
-
 };
 
 #endif // VERTEXCIRCLE_H

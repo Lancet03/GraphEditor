@@ -1,5 +1,6 @@
 #include "GraphPlane.h"
 #include "VertexCircle.h"
+#include "EdgeLine.h"
 #include <QPainter>
 #include <QGraphicsEllipseItem>
 #include <QWheelEvent>
@@ -7,6 +8,7 @@
 
 #include <cmath>
 #include <typeinfo>
+
 
 GraphPlane::GraphPlane(QWidget *parent) : QGraphicsView(parent), currentScale(1.0)
 {
@@ -59,7 +61,7 @@ void GraphPlane::mousePressEvent(QMouseEvent *event)
                     secondSelectedCircle->setPen(QPen(Qt::green, 3)); // Указываем, что кружок выбран
 
                     // Соединяем два выбранных кружка
-                    connectCircles();
+                    connectCircles(firstSelectedCircle, secondSelectedCircle);
 
                     // Сбрасываем выбор
                     firstSelectedCircle->setPen(QPen(Qt::blue, 2));
@@ -105,18 +107,23 @@ void GraphPlane::mousePressEvent(QMouseEvent *event)
     QGraphicsView::mousePressEvent(event);
 }
 
-void GraphPlane::connectCircles()
+void GraphPlane::connectCircles(VertexCircle *start, VertexCircle *end)
 {
-    if (firstSelectedCircle && secondSelectedCircle) {
-        // Получаем центры кружков
-        QPointF firstCenter = firstSelectedCircle->sceneBoundingRect().center();
-        QPointF secondCenter = secondSelectedCircle->sceneBoundingRect().center();
+    // if (firstSelectedCircle && secondSelectedCircle) {
+    //     // Получаем центры кружков
+    //     QPointF firstCenter = firstSelectedCircle->sceneBoundingRect().center();
+    //     QPointF secondCenter = secondSelectedCircle->sceneBoundingRect().center();
 
-        // Создаем линию между центрами кружков
-        QGraphicsLineItem *line = scene->addLine(QLineF(firstCenter, secondCenter), QPen(Qt::black, 2));
+    //     // Создаем линию между центрами кружков
+    //     QGraphicsLineItem *line = scene->addLine(QLineF(firstCenter, secondCenter), QPen(Qt::black, 2));
 
-        // Линия добавлена в сцену
-    }
+    //     // Линия добавлена в сцену
+    // }
+    // Создаем объект линии
+    EdgeLine *edge = new EdgeLine(start, end);
+
+    // Добавляем линию на сцену
+    scene->addItem(edge);
 }
 
 void GraphPlane::drawBackground(QPainter *painter, const QRectF &rect)
@@ -209,7 +216,8 @@ void GraphPlane::mouseMoveEvent(QMouseEvent *event)
         }
         else if (this->mode == Mode::MOVE) {
             QPoint p = event->pos();
-            this->selectedCircle->vertex->MoveTo(p.x(), p.y());
+            // this->selectedCircle->vertex->MoveTo(p.x(), p.y());
+            this->selectedCircle->moveTo(p);
         }
 
     }

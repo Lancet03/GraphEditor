@@ -54,7 +54,7 @@ private:
     bool isDragging = false;         // Флаг режима перетаскивания
     QPoint lastMousePos;             // Последняя позиция мыши
 
-    void connectCircles(); // Метод для соединения кружков линией
+    void connectCircles(VertexCircle *start, VertexCircle *end); // Метод для соединения кружков линией
     void updateEdge(GraphEdge &edge); // Метод для обновления линии
 };
 

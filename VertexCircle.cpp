@@ -34,21 +34,21 @@ void VertexCircle::setRadius(qreal radius)
     setRect(rect().center().x() - radius, rect().center().y() - radius, 2 * radius, 2 * radius);
 }
 
-QVariant VertexCircle::itemChange(GraphicsItemChange change, const QVariant &value)
-{
-    qDebug() << "Vertex  > value changed >" << change;
-    // Проверяем, изменяется ли позиция объекта
-    if (change == QGraphicsItem::ItemPositionChange) {
-        QPointF point = value.toPointF();
-        this->vertex->xPos = point.x();
-        this->vertex->yPos = point.y();
-        qDebug() << "Vertex > position changed > " << this->vertex->xPos << " " << this->vertex->yPos;
+// QVariant VertexCircle::itemChange(GraphicsItemChange change, const QVariant &value)
+// {
+//     qDebug() << "Vertex  > value changed >" << change;
+//     // Проверяем, изменяется ли позиция объекта
+//     if (change == QGraphicsItem::ItemPositionChange) {
+//         QPointF point = value.toPointF();
+//         this->vertex->xPos = point.x();
+//         this->vertex->yPos = point.y();
+//         qDebug() << "Vertex > position changed > " << this->vertex->xPos << " " << this->vertex->yPos;
 
-        // emit positionChanged(value.toPointF()); // Излучаем сигнал с новой позицией
-    }
+//         emit positionChanged(); // Излучаем сигнал с новой позицией
+//     }
 
-    return QGraphicsEllipseItem::itemChange(change, value);
-}
+//     return QGraphicsEllipseItem::itemChange(change, value);
+// }
 
 void VertexCircle::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -72,6 +72,11 @@ void VertexCircle::setMovable(bool movable) {
     } else {
         setFlags(QGraphicsItem::ItemIsSelectable); // Только выделение
     }
+}
+
+void VertexCircle::moveTo(QPoint point) {
+    this->vertex->MoveTo(point.x(), point.y());
+    emit positionChanged(point);
 }
 
 void VertexCircle::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)

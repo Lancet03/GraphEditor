@@ -18,7 +18,7 @@ GraphVertex::GraphVertex(const std::shared_ptr<GraphVertex>& vertex) {
 void GraphVertex::MoveTo(double x, double y) {
     this->xPos = x;
     this->yPos = y;
-    qDebug() << "Object Vertex moved to " << x << " " << y;
+    // qDebug() << "Object Vertex moved to " << x << " " << y;
 }
 
 bool GraphVertex::CheckIfInRadius(double x, double y) {
