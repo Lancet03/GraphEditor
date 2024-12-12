@@ -2,6 +2,7 @@
 #define EDGELINE_H
 
 #include <QGraphicsLineItem>
+#include "GraphEdge.h"
 
 class VertexCircle;
 
@@ -15,7 +16,7 @@ public:
     // Обновить линию в соответствии с текущими позициями кружков
     void updatePosition();
     void removeSelf(); // Удаляет связь между линией и кружками
-
+    GraphEdge* edge;
 
 private:
     VertexCircle *startVertex; // Начальный кружок

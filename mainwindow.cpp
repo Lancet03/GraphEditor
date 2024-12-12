@@ -64,7 +64,7 @@ MainWindow::~MainWindow()
 void MainWindow::updateMousePosition(const QPointF &pos)
 {
     // Форматируем координаты и обновляем метку
-    mousePosLabel->setText(QString("Cursor: (%1, %2)").arg(pos.x(), 0, 'f', 2).arg(pos.y(), 0, 'f', 2));
+    mousePosLabel->setText(QString("Cursor: (%1, %2)").arg(pos.x(), 0, 'f', 2).arg(-pos.y(), 0, 'f', 2));
 }
 
 void MainWindow::updateZoomLevel(qreal scale)
