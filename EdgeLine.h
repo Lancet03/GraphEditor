@@ -23,8 +23,12 @@ public:
 
     VertexCircle *startVertex; // Начальный кружок
     VertexCircle *endVertex;   // Конечный кружок
-private:
+    QRectF boundingRect() const override;
+protected:
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 
+private:
+    void drawArrow(QPainter* painter); // Рисование стрелки
 };
 
 #endif // EDGELINE_H

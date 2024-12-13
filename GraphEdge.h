@@ -17,7 +17,6 @@ public:
     void SetWeight(double weight) { this->weight = weight; }
     double weight;
 private:
-
 };
 
 #endif // GRAPHEDGE_H
