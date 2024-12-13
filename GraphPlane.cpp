@@ -38,11 +38,6 @@ Graph* GraphPlane::SetGraph(Graph* g) {
     }
 
     for (int i = 0; i < g->edges.size(); i++) {
-        // GraphVertex* from = g->edges[i]->from.get();
-        // GraphVertex* to = g->edges[i]->to.get();
-
-        // VertexCircle* fromVertexCircle = this->GetVertexById(from->id);
-        // VertexCircle* toVertexCircle = this->GetVertexById(to->id);
         this->AddEdge(g->edges[i]);
     }
 
@@ -305,6 +300,9 @@ void GraphPlane::mouseMoveEvent(QMouseEvent *event)
 
             // Обновляем радиус вершины
             this->selectedCircle->setRadius(newRadius);
+            for (EdgeLine* edge : this->selectedCircle->getEdges()) {
+                edge->updatePosition();
+            }
         }
         else if (this->mode == Mode::MOVE) {
             QPointF p = mapToScene(event->pos());
