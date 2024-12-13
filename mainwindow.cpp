@@ -250,11 +250,6 @@ void MainWindow::loadGraphFromJson() {
         qreal radius = vertexJson["radius"].toDouble();
 
         // Создаём вершину
-        // VertexCircle *vertex = new VertexCircle(x, y, radius);
-        // vertex->setId(id); // Устанавливаем ID вершины
-        // scene->addItem(vertex);
-        // vertexes.push_back(vertex);
-        // idToVertexMap[id] = vertex;
         GraphVertex* vertex = new GraphVertex(x, y, id, radius);
         idToVertexMap[id] = vertex;
         g->addVertex(x, y, id, radius);

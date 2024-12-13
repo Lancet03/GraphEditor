@@ -311,7 +311,6 @@ void GraphPlane::mouseMoveEvent(QMouseEvent *event)
             // this->selectedCircle->vertex->MoveTo(p.x(), p.y());
             this->selectedCircle->moveTo(p);
         }
-
     }
 
 

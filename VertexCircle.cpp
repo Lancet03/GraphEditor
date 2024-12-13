@@ -61,7 +61,8 @@ qreal VertexCircle::getRadius() const
 void VertexCircle::setRadius(qreal radius)
 {
     qDebug() << "Vertex radius changed " << radius;
-    this->vertex->radius = radius;
+    // this->vertex->radius = radius;
+    this->vertex->SetRadius(radius);
 
     this->m_radius = radius;
     // Обновляем размер круга

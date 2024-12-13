@@ -15,11 +15,11 @@ public:
     std::string name;
     double xPos;
     double yPos;
-    double radius = 20;
+    double radius;
 
     void MoveTo(double x, double y);
     bool CheckIfInRadius(double x, double y);
-    void SetRadius(double r) { this-> radius = r; };
+    void SetRadius(double r);
 };
 
 #endif // GRAPHVERTEX_H

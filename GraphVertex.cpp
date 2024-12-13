@@ -6,7 +6,7 @@ GraphVertex::GraphVertex(double x, double y, int id, int radius) {
     this->xPos = x;
     this->yPos = y;
     this->id = id;
-    this->radius;
+    this->SetRadius(radius);
 }
 
 GraphVertex::GraphVertex(const std::shared_ptr<GraphVertex>& vertex) {
@@ -14,7 +14,7 @@ GraphVertex::GraphVertex(const std::shared_ptr<GraphVertex>& vertex) {
     this->yPos = vertex->yPos;
     this->id = vertex->id;
     this->name = vertex->name;
-    this->radius = vertex->radius;
+    this->SetRadius(vertex->radius);
 }
 
 GraphVertex::GraphVertex(GraphVertex* vertex) {
@@ -22,7 +22,7 @@ GraphVertex::GraphVertex(GraphVertex* vertex) {
     this->yPos = vertex->yPos;
     this->id = vertex->id;
     this->name = vertex->name;
-    this->radius = vertex->radius;
+    this->SetRadius(vertex->radius);
 }
 
 void GraphVertex::MoveTo(double x, double y) {
@@ -35,4 +35,8 @@ bool GraphVertex::CheckIfInRadius(double x, double y) {
     double dx = x - this->xPos;
     double dy = y - this->yPos;
     return dx*dx + dy*dy <= this->radius * this->radius;
+}
+
+void GraphVertex::SetRadius(double r) {
+    this->radius = r;
 }

@@ -9,7 +9,7 @@ std::shared_ptr<GraphVertex> Graph::addVertex(double xPos, double yPos, int id, 
     if (id < 0) {
         graphId = this->calcUniqueVertexId();
     }
-    std::shared_ptr<GraphVertex> vetrex = std::make_shared<GraphVertex>(xPos, yPos, graphId);
+    std::shared_ptr<GraphVertex> vetrex = std::make_shared<GraphVertex>(xPos, yPos, graphId, radius);
     this->vertexes.push_back(vetrex);
 
     return vetrex;
