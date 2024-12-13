@@ -2,9 +2,11 @@
 #include <QDebug>
 
 
-GraphVertex::GraphVertex(double x, double y) {
+GraphVertex::GraphVertex(double x, double y, int id, int radius) {
     this->xPos = x;
     this->yPos = y;
+    this->id = id;
+    this->radius;
 }
 
 GraphVertex::GraphVertex(const std::shared_ptr<GraphVertex>& vertex) {
@@ -15,10 +17,18 @@ GraphVertex::GraphVertex(const std::shared_ptr<GraphVertex>& vertex) {
     this->radius = vertex->radius;
 }
 
+GraphVertex::GraphVertex(GraphVertex* vertex) {
+    this->xPos = vertex->xPos;
+    this->yPos = vertex->yPos;
+    this->id = vertex->id;
+    this->name = vertex->name;
+    this->radius = vertex->radius;
+}
+
 void GraphVertex::MoveTo(double x, double y) {
     this->xPos = x;
     this->yPos = y;
-    // qDebug() << "Object Vertex moved to " << x << " " << y;
+    qDebug() << "Object Vertex moved to " << x << " " << y;
 }
 
 bool GraphVertex::CheckIfInRadius(double x, double y) {

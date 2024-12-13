@@ -39,11 +39,18 @@ private slots:
 
     void on_MoveMode_toggled(bool checked);
 
+    void on_save_triggered();
+
+    void on_open_triggered();
+
 private:
     Ui::MainWindow *ui;
     AdjacencyMatrix *matrixWindow;
     GraphPlane *graphPlane; // Виджет с координатной плоскостью
     QLabel *mousePosLabel;  // Метка для координат
     QLabel *zoomLevelLabel; // Метка для уровня зума
+
+    void saveGraph();
+    void loadGraphFromJson();
 };
 #endif // MAINWINDOW_H

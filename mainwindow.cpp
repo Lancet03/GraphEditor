@@ -5,8 +5,15 @@
 #include <QLabel>
 #include <QDebug>
 #include <QButtonGroup>
+#include <QFileDialog>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <memory>
 
 #include "GraphPlane.h"
+#include "Graph.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -104,8 +111,6 @@ void MainWindow::on_AddEdges_toggled(bool checked)
     this->graphPlane->SetMode(Mode::ADD_EDGES);
 }
 
-
-
 void MainWindow::on_EditMode_toggled(bool checked)
 {
     qDebug() << "EditMode";
@@ -119,3 +124,164 @@ void MainWindow::on_MoveMode_toggled(bool checked)
     this->graphPlane->SetMode(Mode::MOVE);
 }
 
+void MainWindow::on_save_triggered()
+{
+    this->saveGraph();
+}
+
+
+void MainWindow::on_open_triggered()
+{
+    this->loadGraphFromJson();
+}
+
+
+void MainWindow::saveGraph() {
+    // Открываем диалог для выбора файла
+    QString fileName = QFileDialog::getSaveFileName(
+        nullptr,
+        "Сохранить граф",           // Заголовок окна
+        "",                     // Начальная папка
+        "JSON Files (*.json)"   // Фильтры типов файлов
+        );
+
+    // Проверяем, был ли файл выбран
+    if (fileName.isEmpty()) {
+        QMessageBox::information(nullptr, "Save Graph", "Файл не выбран!");
+        return;
+    }
+
+    // Добавляем расширение, если его нет
+    if (!fileName.endsWith(".json", Qt::CaseInsensitive)) {
+        fileName += ".json";
+    }
+
+    // Пример данных для сохранения
+    QJsonObject graphJson;
+
+    QJsonArray vertexesArray;
+    for (const auto &vertex : this->graphPlane->graph->vertexes) {
+        QJsonObject vertexJson;
+        vertexJson["id"] = vertex->id;
+        vertexJson["x"] = vertex->xPos;
+        vertexJson["y"] = vertex->yPos;
+        vertexJson["radius"] = vertex->radius;
+        qDebug()  << "Json vertex to save " << vertexJson;
+        qDebug() << "Json pos ot save " << vertex->xPos << " " << vertex->yPos;
+
+        vertexesArray.append(vertexJson);
+    }
+    graphJson["vertexes"] = vertexesArray;
+
+    // Сериализация рёбер
+    QJsonArray edgesArray;
+    for (const auto &edge : this->graphPlane->graph->edges) {
+        QJsonObject edgeJson;
+        edgeJson["from"] = edge->from->id;
+        edgeJson["to"] = edge->to->id;
+        edgeJson["weight"] = edge->weight; // Если есть флаг ориентированности
+        edgesArray.append(edgeJson);
+    }
+    graphJson["edges"] = edgesArray;
+
+    // Конвертируем JSON-объект в строку
+    QJsonDocument jsonDoc(graphJson);
+
+    // Открываем файл для записи
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly)) {
+        QMessageBox::critical(nullptr, "Error", "Cannot open file for writing!");
+        return;
+    }
+
+    // Записываем JSON в файл
+    file.write(jsonDoc.toJson(QJsonDocument::Indented)); // Читаемый формат
+    file.close();
+
+    QMessageBox::information(nullptr, "Save Graph", "Graph saved successfully!");
+}
+
+void MainWindow::loadGraphFromJson() {
+    // Открываем диалог для выбора файла
+    QString fileName = QFileDialog::getOpenFileName(
+        nullptr,
+        "Load Graph",              // Заголовок окна
+        "",                        // Начальная папка
+        "JSON Files (*.json)"      // Фильтр типов файлов
+        );
+
+    // Проверяем, был ли файл выбран
+    if (fileName.isEmpty()) {
+        QMessageBox::information(nullptr, "Load Graph", "No file selected!");
+        return;
+    }
+
+    // Открываем файл для чтения
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly)) {
+        QMessageBox::critical(nullptr, "Error", "Cannot open file for reading!");
+        return;
+    }
+
+    // Считываем содержимое файла
+    QByteArray data = file.readAll();
+    file.close();
+
+    // Парсим JSON
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
+    if (jsonDoc.isNull() || !jsonDoc.isObject()) {
+        QMessageBox::critical(nullptr, "Error", "Invalid JSON format!");
+        return;
+    }
+
+    QJsonObject graphJson = jsonDoc.object();
+
+    // this->graphPlane->ClearGraph();
+    Graph* g = new Graph();
+
+    // Десериализация вершин
+    QJsonArray vertexesArray = graphJson["vertexes"].toArray();
+    QMap<int, GraphVertex*> idToVertexMap;
+    for (const QJsonValue &value : vertexesArray) {
+        QJsonObject vertexJson = value.toObject();
+        int id = vertexJson["id"].toInt();
+        qreal x = vertexJson["x"].toDouble();
+        qreal y = vertexJson["y"].toDouble();
+        qreal radius = vertexJson["radius"].toDouble();
+
+        // Создаём вершину
+        // VertexCircle *vertex = new VertexCircle(x, y, radius);
+        // vertex->setId(id); // Устанавливаем ID вершины
+        // scene->addItem(vertex);
+        // vertexes.push_back(vertex);
+        // idToVertexMap[id] = vertex;
+        GraphVertex* vertex = new GraphVertex(x, y, id, radius);
+        idToVertexMap[id] = vertex;
+        g->addVertex(x, y, id, radius);
+    }
+
+    // Десериализация рёбер
+    QJsonArray edgesArray = graphJson["edges"].toArray();
+    for (const QJsonValue &value : edgesArray) {
+        QJsonObject edgeJson = value.toObject();
+        int startVertexId = edgeJson["from"].toInt();
+        int endVertexId = edgeJson["to"].toInt();
+        double weight = edgeJson["weight"].toDouble();
+
+        // Получаем ссылки на начальную и конечную вершины
+        GraphVertex* startVertex = idToVertexMap.value(startVertexId, nullptr);
+        GraphVertex* endVertex = idToVertexMap.value(endVertexId, nullptr);
+
+        if (startVertex && endVertex) {
+            // Создаём ребро
+            GraphEdge* edge = new GraphEdge(std::make_shared<GraphVertex>(startVertex), std::make_shared<GraphVertex>(endVertex));
+            edge->SetWeight(weight);
+            g->addEdge(edge);
+        } else {
+            qWarning() << "Edge references invalid vertex IDs:" << startVertexId << "->" << endVertexId;
+        }
+    }
+
+    this->graphPlane->SetGraph(g);
+    QMessageBox::information(nullptr, "Load Graph", "Graph loaded successfully!");
+}

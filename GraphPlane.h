@@ -10,6 +10,8 @@
 #include "Graph.h"
 #include "Mode.h"
 #include "VertexCircle.h"
+#include "EdgeLine.h"
+#include <memory>
 
 class GraphPlane : public QGraphicsView
 {
@@ -18,12 +20,29 @@ class GraphPlane : public QGraphicsView
 public:
     explicit GraphPlane(QWidget *parent = nullptr);
 
+    // std::vector<VertexCircle> vertexCircles;
+    // std::vector<EdgeLine> edgeLines;
+    QList<VertexCircle*> vertexCircles;
+    VertexCircle* AddVertex(QPointF vertex_center);
+    VertexCircle* AddVertex(std::shared_ptr<GraphVertex> vertex);
+    void RemoveVertex(VertexCircle* vertex);
+
+    QList<EdgeLine*> edgeLines;
+    EdgeLine* AddEdge(VertexCircle *start, VertexCircle *end);
+    EdgeLine* AddEdge(std::shared_ptr<GraphEdge> edge);
+    void RemoveEdge(EdgeLine* edge);
+
+
     // Получение текущего масштаба
     qreal getCurrentScale() const;
     Graph* graph;
     Graph* SetGraph(Graph* g);
     void SetMode(Mode m) { this->mode = m; };
     Mode GetMode(Mode m) { return this->mode; };
+
+    VertexCircle* GetVertexById(int id);
+
+    void ClearGraph();
 signals:
     void mousePositionChanged(const QPointF &scenePos); // Сигнал для обновления координат
     void zoomLevelChanged(qreal scale);                // Сигнал для изменения масштаба
@@ -54,7 +73,7 @@ private:
     bool isDragging = false;         // Флаг режима перетаскивания
     QPoint lastMousePos;             // Последняя позиция мыши
 
-    void connectCircles(VertexCircle *start, VertexCircle *end); // Метод для соединения кружков линией
+    // void connectCircles(VertexCircle *start, VertexCircle *end); // Метод для соединения кружков линией
     void updateEdge(GraphEdge &edge); // Метод для обновления линии
 };
 

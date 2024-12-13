@@ -25,14 +25,52 @@ GraphPlane::GraphPlane(QWidget *parent) : QGraphicsView(parent), currentScale(1.
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-
-
     this->graph = new Graph();
 }
 
 Graph* GraphPlane::SetGraph(Graph* g) {
+    this->ClearGraph();
+
     this->graph = g;
+
+    for (int i = 0; i < g->vertexes.size(); i++) {
+        this->AddVertex(g->vertexes[i]);
+    }
+
+    for (int i = 0; i < g->edges.size(); i++) {
+        // GraphVertex* from = g->edges[i]->from.get();
+        // GraphVertex* to = g->edges[i]->to.get();
+
+        // VertexCircle* fromVertexCircle = this->GetVertexById(from->id);
+        // VertexCircle* toVertexCircle = this->GetVertexById(to->id);
+        this->AddEdge(g->edges[i]);
+    }
+
     return g;
+}
+
+void GraphPlane::ClearGraph() {
+    for (auto vertex : this->vertexCircles) {
+        this->scene->removeItem(vertex);
+        delete vertex;
+    }
+    this->vertexCircles.clear();
+
+    for (auto edge : this->edgeLines) {
+        scene->removeItem(edge);
+        delete edge;
+    }
+    this->edgeLines.clear();
+}
+
+VertexCircle* GraphPlane::GetVertexById(int id) {
+    for (int i = 0; i < this->vertexCircles.size(); i++) {
+        int vertexId = this->vertexCircles[i]->GetId();
+        if (id == vertexId) {
+            return this->vertexCircles[i];
+        }
+    }
+    return nullptr;
 }
 
 void GraphPlane::mousePressEvent(QMouseEvent *event)
@@ -61,7 +99,8 @@ void GraphPlane::mousePressEvent(QMouseEvent *event)
                     secondSelectedCircle->setPen(QPen(Qt::green, 3)); // Указываем, что кружок выбран
 
                     // Соединяем два выбранных кружка
-                    connectCircles(firstSelectedCircle, secondSelectedCircle);
+                    // connectCircles(firstSelectedCircle, secondSelectedCircle);
+                    this->AddEdge(firstSelectedCircle, secondSelectedCircle);
 
                     // Сбрасываем выбор
                     firstSelectedCircle->setPen(QPen(Qt::blue, 2));
@@ -71,16 +110,15 @@ void GraphPlane::mousePressEvent(QMouseEvent *event)
                 }
             }
         } else if (this->mode == Mode::ADD_VERTEXES) {
-            VertexCircle *circle = new VertexCircle(scenePos.x() - 10, scenePos.y() - 10, 20);
-            scene->addItem(circle); // Добавляем в сцену
-            this->graph->addVertex(circle->vertex);
+            this->AddVertex(scenePos);
         }
     } else if (event->button() == Qt::RightButton) {
         // Проверяем, есть ли объект под курсором
         QGraphicsItem *item = scene->itemAt(scenePos, QTransform());
         if (item->data(0).toString() == "VertexCircle") {
             VertexCircle* vertex = dynamic_cast<VertexCircle*>(item);
-            vertex->removeSelf();
+            // vertex->removeSelf();
+            this->RemoveVertex(vertex);
         }
     } else if (event->button() == Qt::MiddleButton) {
         this->isDragging = true;
@@ -105,23 +143,79 @@ void GraphPlane::mousePressEvent(QMouseEvent *event)
     QGraphicsView::mousePressEvent(event);
 }
 
-void GraphPlane::connectCircles(VertexCircle *start, VertexCircle *end)
-{
-    // if (firstSelectedCircle && secondSelectedCircle) {
-    //     // Получаем центры кружков
-    //     QPointF firstCenter = firstSelectedCircle->sceneBoundingRect().center();
-    //     QPointF secondCenter = secondSelectedCircle->sceneBoundingRect().center();
+VertexCircle* GraphPlane::AddVertex(QPointF vertex_center) {
+    VertexCircle *circle = new VertexCircle(vertex_center.x() - 10, vertex_center.y() - 10, 20, this->graph);
+    scene->addItem(circle); // Добавляем в сцену
+    this->graph->addVertex(circle->vertex);
+    this->vertexCircles.push_back(circle);
 
-    //     // Создаем линию между центрами кружков
-    //     QGraphicsLineItem *line = scene->addLine(QLineF(firstCenter, secondCenter), QPen(Qt::black, 2));
+    return circle;
+}
 
-    //     // Линия добавлена в сцену
-    // }
-    // Создаем объект линии
-    EdgeLine *edge = new EdgeLine(start, end);
+VertexCircle* GraphPlane::AddVertex(std::shared_ptr<GraphVertex> vertex) {
+    VertexCircle *circle = new VertexCircle(vertex.get(), this->graph);
+    scene->addItem(circle); // Добавляем в сцену
+
+    this->vertexCircles.push_back(circle);
+
+    return circle;
+}
+
+void GraphPlane::RemoveVertex(VertexCircle* vertex) {
+    for (int i = 0; i < this->vertexCircles.count(); i++) {
+        if (this->vertexCircles[i] == vertex) {
+            this->vertexCircles.removeAt(i);
+        }
+    }
+
+    while (vertex->getEdges().size()) {
+        // vertex->getEdges()[0]->removeSelf();
+        EdgeLine* edge = vertex->getEdges()[0];
+        this->RemoveEdge(edge);
+    }
+
+    // Удаляем саму вершину из сцены
+    this->scene->removeItem(vertex);
+
+    this->graph->removeVertex(vertex->vertex);
+}
+
+EdgeLine* GraphPlane::AddEdge(VertexCircle *start, VertexCircle *end) {
+    EdgeLine *edge = new EdgeLine(start, end, this->graph);
+    this->graph->addEdge(edge->edge);
 
     // Добавляем линию на сцену
     scene->addItem(edge);
+
+    return edge;
+}
+
+EdgeLine* GraphPlane::AddEdge(std::shared_ptr<GraphEdge> edge) {
+    GraphVertex* from = edge->from.get();
+    GraphVertex* to = edge->to.get();
+
+    VertexCircle* start = this->GetVertexById(from->id);
+    VertexCircle* end = this->GetVertexById(to->id);
+
+    EdgeLine *edgeLine = new EdgeLine(edge.get(), start, end, this->graph);
+
+    // Добавляем линию на сцену
+    this->scene->addItem(edgeLine);
+
+    return edgeLine;
+}
+
+void GraphPlane::RemoveEdge(EdgeLine* edge) {
+    if (edge->startVertex) {
+        edge->startVertex->removeEdge(edge);
+    }
+    if (edge->endVertex) {
+        edge->endVertex->removeEdge(edge);
+    }
+    // Удаляем саму линию из сцены
+    this->scene->removeItem(edge);
+
+    this->graph->removeEdge(edge->edge);
 }
 
 void GraphPlane::drawBackground(QPainter *painter, const QRectF &rect)
@@ -213,7 +307,7 @@ void GraphPlane::mouseMoveEvent(QMouseEvent *event)
             this->selectedCircle->setRadius(newRadius);
         }
         else if (this->mode == Mode::MOVE) {
-            QPoint p = event->pos();
+            QPointF p = mapToScene(event->pos());
             // this->selectedCircle->vertex->MoveTo(p.x(), p.y());
             this->selectedCircle->moveTo(p);
         }
@@ -245,7 +339,7 @@ void GraphPlane::mouseReleaseEvent(QMouseEvent *event)
         setDragMode(QGraphicsView::NoDrag);
     } else if (event->button() == Qt::LeftButton && this->selectedCircle) {
         if (this->mode == Mode::MOVE) {
-            QPoint p = event->pos();
+            QPointF p = mapToScene(event->pos());
             this->selectedCircle->vertex->MoveTo(p.x(), p.y());
             this->selectedCircle->setMovable(false);
         }

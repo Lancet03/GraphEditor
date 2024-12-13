@@ -4,14 +4,28 @@
 #include <QDebug>
 #include <QGraphicsScene>
 
-VertexCircle::VertexCircle(qreal x, qreal y, qreal radius, QGraphicsItem *parent)
+VertexCircle::VertexCircle(qreal x, qreal y, qreal radius, Graph* graph, QGraphicsItem *parent)
     : QGraphicsEllipseItem(parent), m_radius(radius)
 {
-    this->vertex = new GraphVertex(x, y);
+    this->vertex = new GraphVertex(x, y, graph->calcUniqueVertexId());
     this->vertex->radius = radius;
+    this->m_radius = radius;
+    this->graph = graph;
 
+    this->SetStartParameters();
+}
+
+VertexCircle::VertexCircle(GraphVertex* vertex, Graph* graph, QGraphicsItem *parent) {
+    this->vertex = vertex;
+    this->graph = graph;
+    this->m_radius = this->vertex->radius;
+
+    this->SetStartParameters();
+}
+
+void VertexCircle::SetStartParameters() {
     // Устанавливаем начальные параметры
-    setRect(x - radius, y - radius, 2 * radius, 2 * radius);
+    setRect(this->vertex->xPos - this->m_radius, this->vertex->yPos - this->m_radius, 2 * this->m_radius, 2 * this->m_radius);
     // Устанавливаем базовый стиль
     setPen(QPen(Qt::blue, 2));
     setBrush(QBrush(Qt::cyan));
@@ -24,21 +38,24 @@ qreal VertexCircle::getRadius() const
     return m_radius;
 }
 
-void VertexCircle::removeSelf() {
-    // // Delete detached lines
-    // for (EdgeLine* edge : this->edges) {
-    //     edge->removeSelf();
-    // }
-    while (this->edges.size()) {
-        this->edges[0]->removeSelf();
-    }
+// void VertexCircle::removeSelf() {
+//     // // Delete detached lines
+//     // for (EdgeLine* edge : this->edges) {
+//     //     edge->removeSelf();
+//     // }
+//     while (this->edges.size()) {
+//         this->edges[0]->removeSelf();
+//     }
 
-    // Удаляем саму линию из сцены
-    if (scene()) {
-        scene()->removeItem(this);
-    }
-    delete this;
-}
+//     // Удаляем саму вершину из сцены
+//     if (scene()) {
+//         scene()->removeItem(this);
+//     }
+
+//     this->graph->removeVertex(this->vertex);
+
+//     delete this;
+// }
 
 
 void VertexCircle::setRadius(qreal radius)
@@ -46,7 +63,7 @@ void VertexCircle::setRadius(qreal radius)
     qDebug() << "Vertex radius changed " << radius;
     this->vertex->radius = radius;
 
-    m_radius = radius;
+    this->m_radius = radius;
     // Обновляем размер круга
     setRect(rect().center().x() - radius, rect().center().y() - radius, 2 * radius, 2 * radius);
 }
@@ -81,6 +98,10 @@ const QList<EdgeLine*>& VertexCircle::getEdges() const {
     return edges;
 }
 
+int VertexCircle::GetId() {
+    return this->vertex->id;
+}
+
 void VertexCircle::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     // Изменяем стиль при начале перемещения
@@ -105,7 +126,7 @@ void VertexCircle::setMovable(bool movable) {
     }
 }
 
-void VertexCircle::moveTo(QPoint point) {
+void VertexCircle::moveTo(QPointF point) {
     this->vertex->MoveTo(point.x(), point.y());
     for (int i = 0; i < this->edges.count(); i++) {
         this->edges[i]->updatePosition();

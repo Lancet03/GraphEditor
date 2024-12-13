@@ -3,8 +3,13 @@
 #include <iostream>
 #include <iomanip>
 
-std::shared_ptr<GraphVertex> Graph::addVertex(double xPos, double yPos) {
-     std::shared_ptr<GraphVertex> vetrex = std::make_shared<GraphVertex>(xPos, yPos);
+    // int id = this->calcUniqueVertexId();
+std::shared_ptr<GraphVertex> Graph::addVertex(double xPos, double yPos, int id, int radius) {
+    int graphId = id;
+    if (id < 0) {
+        graphId = this->calcUniqueVertexId();
+    }
+    std::shared_ptr<GraphVertex> vetrex = std::make_shared<GraphVertex>(xPos, yPos, graphId);
     this->vertexes.push_back(vetrex);
 
     return vetrex;
@@ -15,6 +20,50 @@ std::shared_ptr<GraphVertex> Graph::addVertex(GraphVertex* vertex) {
     this->vertexes.push_back(vertex_sptr);
 
     return vertex_sptr;
+}
+
+void Graph::removeVertex(GraphVertex* vertex) {    
+    for (int i = 0; i < this->vertexes.size(); i++) {
+        if (vertex->id == this->vertexes[i]->id) {
+            this->vertexes.erase(this->vertexes.begin() + i);
+            return;
+        }
+    }
+}
+
+
+std::shared_ptr<GraphEdge> Graph::addEdge(int from_vertex_id, int to_vertex_id) {
+    std::shared_ptr<GraphVertex> from = this->getVertexById(from_vertex_id);
+    std::shared_ptr<GraphVertex> to = this->getVertexById(to_vertex_id);
+
+    std::shared_ptr<GraphEdge> edge = std::make_shared<GraphEdge>(from, to);
+    this->edges.push_back(edge);
+    return edge;
+}
+
+std::shared_ptr<GraphEdge> Graph::addEdge(GraphEdge* edge) {
+    std::shared_ptr<GraphEdge> edge_sptr = std::make_shared<GraphEdge>(edge);
+    this->edges.push_back(edge_sptr);
+    return edge_sptr;
+}
+
+void Graph::removeEdge(GraphEdge *edge) {
+    for (int i = 0; i < this->edges.size(); i++) {
+        if (this->edges[i]->from->id == edge->from->id &&
+            this->edges[i]->to->id == edge->to->id) {
+            this->edges.erase(this->edges.begin() + i);
+            return;
+        }
+    }
+}
+
+int Graph::calcUniqueVertexId() {
+    int id = this->vertexes.size();
+    while (this->getVertexById(id) != nullptr) {
+        id++;
+    }
+
+    return id;
 }
 
 void Graph::PrintCorrespMatrix() {
@@ -73,3 +122,14 @@ double Graph::GetEdgeWeigth(std::shared_ptr<GraphVertex> from, std::shared_ptr<G
 
     return 0;
 }
+
+std::shared_ptr<GraphVertex> Graph::getVertexById(int id) {
+    for (int i = 0; i < this->vertexes.size(); i++) {
+        if (this->vertexes[i]->id == id) {
+            return this->vertexes[i];
+        }
+    }
+
+    return nullptr;
+}
+

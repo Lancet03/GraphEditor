@@ -7,11 +7,14 @@
 class GraphEdge
 {
 public:
-    GraphEdge();
+    GraphEdge(std::shared_ptr<GraphVertex> from, std::shared_ptr<GraphVertex> to);
+    GraphEdge(GraphEdge* edge);
     // int from;
     // int to;
     std::shared_ptr<GraphVertex> from;
     std::shared_ptr<GraphVertex> to;
+
+    void SetWeight(double weight) { this->weight = weight; }
     double weight;
 private:
 
