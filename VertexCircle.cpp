@@ -69,22 +69,6 @@ void VertexCircle::setRadius(qreal radius)
     setRect(rect().center().x() - radius, rect().center().y() - radius, 2 * radius, 2 * radius);
 }
 
-// QVariant VertexCircle::itemChange(GraphicsItemChange change, const QVariant &value)
-// {
-//     qDebug() << "Vertex  > value changed >" << change;
-//     // Проверяем, изменяется ли позиция объекта
-//     if (change == QGraphicsItem::ItemPositionChange) {
-//         QPointF point = value.toPointF();
-//         this->vertex->xPos = point.x();
-//         this->vertex->yPos = point.y();
-//         qDebug() << "Vertex > position changed > " << this->vertex->xPos << " " << this->vertex->yPos;
-
-//         emit positionChanged(); // Излучаем сигнал с новой позицией
-//     }
-
-//     return QGraphicsEllipseItem::itemChange(change, value);
-// }
-
 void VertexCircle::addEdge(EdgeLine* edge) {
     if (!edges.contains(edge)) {
         edges.append(edge);

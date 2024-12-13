@@ -43,9 +43,30 @@ EdgeLine::EdgeLine(GraphEdge* edge, VertexCircle *start, VertexCircle *end, Grap
 void EdgeLine::updatePosition()
 {
     this->prepareGeometryChange();
-    // Устанавливаем новую линию между центрами кружков
-    setLine(QLineF(startVertex->sceneBoundingRect().center(),
-                   endVertex->sceneBoundingRect().center()));
+    // // Устанавливаем новую линию между центрами кружков
+    // setLine(QLineF(startVertex->sceneBoundingRect().center(),
+    //                endVertex->sceneBoundingRect().center()));
+
+    // Координаты центров вершин
+    QPointF startCenter = startVertex->sceneBoundingRect().center();
+    QPointF endCenter = endVertex->sceneBoundingRect().center();
+
+    // Вектор от начала к концу
+    QLineF line(startCenter, endCenter);
+
+    // Радиусы кружков
+    qreal startRadius = startVertex->getRadius();
+    qreal endRadius = endVertex->getRadius();
+
+    // Пересечение линии с окружностью начальной вершины
+    QPointF startPoint = line.pointAt(startRadius / line.length());
+
+    // Пересечение линии с окружностью конечной вершины
+    QPointF endPoint = line.pointAt(1.0 - (endRadius / line.length()));
+
+    // Устанавливаем линию
+    setLine(QLineF(startPoint, endPoint));
+
     this->update();
 }
 
