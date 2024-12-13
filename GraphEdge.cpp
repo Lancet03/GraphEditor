@@ -1,13 +1,16 @@
 #include "GraphEdge.h"
 #include <memory>
 
-GraphEdge::GraphEdge(std::shared_ptr<GraphVertex> from, std::shared_ptr<GraphVertex> to) {
+GraphEdge::GraphEdge(std::shared_ptr<GraphVertex> from, std::shared_ptr<GraphVertex> to, std::string name, double weigth) {
     this->from = from;
     this->to =  to;
+    this->SetName(name);
+    this->SetWeight(weight);
 }
 
 GraphEdge::GraphEdge(GraphEdge* edge) {
     this->from = edge->from;
     this->to = edge->to;
-    this->weight = edge->weight;
+    this->SetName(edge->name);
+    this->SetWeight(edge->weight);
 }

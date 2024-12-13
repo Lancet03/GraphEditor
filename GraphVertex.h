@@ -7,11 +7,15 @@ class GraphVertex
 {
 public:
     // GraphVertex(double x, double y);
-    GraphVertex(double x, double y, int id, int radius = 20);
+    GraphVertex(double x, double y, int id, int radius = 20, std::string name = "");
     GraphVertex(const std::shared_ptr<GraphVertex>& vertex);
     GraphVertex(GraphVertex* vertex);
 
+
     int id;
+
+    void SetName(std::string name) { this->name = name; };
+    std::string GetName() { return this->name; };
     std::string name;
     double xPos;
     double yPos;

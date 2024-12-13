@@ -2,18 +2,19 @@
 #include <QDebug>
 
 
-GraphVertex::GraphVertex(double x, double y, int id, int radius) {
+GraphVertex::GraphVertex(double x, double y, int id, int radius, std::string name) {
     this->xPos = x;
     this->yPos = y;
     this->id = id;
     this->SetRadius(radius);
+    this->SetName(name);
 }
 
 GraphVertex::GraphVertex(const std::shared_ptr<GraphVertex>& vertex) {
     this->xPos = vertex->xPos;
     this->yPos = vertex->yPos;
     this->id = vertex->id;
-    this->name = vertex->name;
+    this->SetName(vertex->name);
     this->SetRadius(vertex->radius);
 }
 
@@ -21,7 +22,7 @@ GraphVertex::GraphVertex(GraphVertex* vertex) {
     this->xPos = vertex->xPos;
     this->yPos = vertex->yPos;
     this->id = vertex->id;
-    this->name = vertex->name;
+    this->SetName(vertex->name);
     this->SetRadius(vertex->radius);
 }
 

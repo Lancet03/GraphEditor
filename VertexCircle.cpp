@@ -3,6 +3,8 @@
 #include <QStyleOptionGraphicsItem>
 #include <QDebug>
 #include <QGraphicsScene>
+#include <QLineEdit>
+#include <QGraphicsProxyWidget>
 
 VertexCircle::VertexCircle(qreal x, qreal y, qreal radius, Graph* graph, QGraphicsItem *parent)
     : QGraphicsEllipseItem(parent), m_radius(radius)
@@ -12,7 +14,13 @@ VertexCircle::VertexCircle(qreal x, qreal y, qreal radius, Graph* graph, QGraphi
     this->m_radius = radius;
     this->graph = graph;
 
+
     this->SetStartParameters();
+
+    // Создаём текстовый элемент
+    this->name = new QGraphicsTextItem(this);
+    name->setPlainText(""); // По умолчанию текст пуст
+    this->updateNamePosition();
 }
 
 VertexCircle::VertexCircle(GraphVertex* vertex, Graph* graph, QGraphicsItem *parent) {
@@ -21,6 +29,11 @@ VertexCircle::VertexCircle(GraphVertex* vertex, Graph* graph, QGraphicsItem *par
     this->m_radius = this->vertex->radius;
 
     this->SetStartParameters();
+
+    // Создаём текстовый элемент
+    this->name = new QGraphicsTextItem(this);
+    name->setPlainText(QString::fromStdString(vertex->GetName())); // По умолчанию текст пуст
+    this->updateNamePosition();
 }
 
 void VertexCircle::SetStartParameters() {
@@ -38,25 +51,23 @@ qreal VertexCircle::getRadius() const
     return m_radius;
 }
 
-// void VertexCircle::removeSelf() {
-//     // // Delete detached lines
-//     // for (EdgeLine* edge : this->edges) {
-//     //     edge->removeSelf();
-//     // }
-//     while (this->edges.size()) {
-//         this->edges[0]->removeSelf();
-//     }
+void VertexCircle::setName(const QString &name) {
+    this->name->setPlainText(name);
+    this->vertex->name = name.toStdString();
+    updateNamePosition(); // Обновляем позицию текста
+}
 
-//     // Удаляем саму вершину из сцены
-//     if (scene()) {
-//         scene()->removeItem(this);
-//     }
+QString VertexCircle::getName() const {
+    return name->toPlainText();
+}
 
-//     this->graph->removeVertex(this->vertex);
-
-//     delete this;
-// }
-
+void VertexCircle::updateNamePosition() {
+    // Располагаем текст в центре вершины
+    QPointF center = boundingRect().center();
+    // QPointF center = rect().center();
+    this->name->setPos(center.x() - this->name->boundingRect().width() / 2,
+                     center.y() - this->name->boundingRect().height() / 2);
+}
 
 void VertexCircle::setRadius(qreal radius)
 {
@@ -101,6 +112,35 @@ void VertexCircle::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     setPen(QPen(Qt::blue, 2));
     setBrush(QBrush(Qt::cyan));
     QGraphicsEllipseItem::mouseReleaseEvent(event); // Передаём управление базовому классу
+}
+
+void VertexCircle::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) {
+    this->editName();
+    QGraphicsEllipseItem::mouseDoubleClickEvent(event);
+}
+
+void VertexCircle::editName() {
+    if (!scene()) {
+        qWarning() << "The item is not part of a scene.";
+        return;
+    }
+
+    // Создаём текстовое поле для редактирования
+    QLineEdit* lineEdit = new QLineEdit(this->name->toPlainText());
+    lineEdit->setAlignment(Qt::AlignCenter);
+
+    // Добавляем текстовое поле в сцену через ProxyWidget
+    QGraphicsProxyWidget* proxy = scene()->addWidget(lineEdit);
+    proxy->setPos(this->name->scenePos());
+
+    // Устанавливаем фокус на поле ввода
+    lineEdit->setFocus();
+
+    // Сигнал на завершение редактирования
+    connect(lineEdit, &QLineEdit::editingFinished, [this, lineEdit, proxy]() {
+        setName(lineEdit->text());
+        proxy->deleteLater(); // Корректно удаляем ProxyWidget
+    });
 }
 
 void VertexCircle::setMovable(bool movable) {

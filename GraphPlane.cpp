@@ -50,17 +50,17 @@ Graph* GraphPlane::SetGraph(Graph* g) {
 }
 
 void GraphPlane::ClearGraph() {
-    for (auto vertex : this->vertexCircles) {
-        this->scene->removeItem(vertex);
-        delete vertex;
-    }
-    this->vertexCircles.clear();
-
     for (auto edge : this->edgeLines) {
         scene->removeItem(edge);
         delete edge;
     }
     this->edgeLines.clear();
+
+    for (auto vertex : this->vertexCircles) {
+        this->scene->removeItem(vertex);
+        delete vertex;
+    }
+    this->vertexCircles.clear();
 }
 
 VertexCircle* GraphPlane::GetVertexById(int id) {

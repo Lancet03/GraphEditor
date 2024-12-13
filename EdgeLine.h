@@ -2,6 +2,8 @@
 #define EDGELINE_H
 
 #include <QGraphicsLineItem>
+#include <QGraphicsTextItem>
+#include <QGraphicsSceneMouseEvent>
 #include "GraphEdge.h"
 #include "Graph.h"
 
@@ -24,11 +26,18 @@ public:
     VertexCircle *startVertex; // Начальный кружок
     VertexCircle *endVertex;   // Конечный кружок
     QRectF boundingRect() const override;
+
+    void setName(const QString &name);
+    QString getName() const;
 protected:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override;
 
 private:
     void drawArrow(QPainter* painter); // Рисование стрелки
+    QGraphicsTextItem* name; // Текстовый элемент для имени ребра
+    void updateNamePosition();
+    void editName();
 };
 
 #endif // EDGELINE_H

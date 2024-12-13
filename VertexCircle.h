@@ -6,6 +6,8 @@
 #include <QPen>
 #include <QBrush>
 #include <QPainter>
+#include <QGraphicsTextItem>
+#include <QGraphicsSceneMouseEvent>
 
 #include "GraphVertex.h"
 #include "EdgeLine.h"
@@ -34,19 +36,24 @@ public:
     const QList<EdgeLine*>& getEdges() const;
 
     int GetId();
+
+    void setName(const QString &name);
+    QString getName() const;
     // void removeSelf();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override; // Начало перемещения
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override; // Завершение перемещения
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override; // Кастомная отрисовка
-    // QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
-    void SetStartParameters();
-
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override;
 
 private:
     qreal m_radius; // Радиус круга
     QList<EdgeLine*> edges; // Список линий, связанных с этим кружком
+    QGraphicsTextItem* name; // Текстовый элемент для имени вершины
+    void updateNamePosition();
+    void SetStartParameters();
+    void editName();
 };
 
 #endif // VERTEXCIRCLE_H

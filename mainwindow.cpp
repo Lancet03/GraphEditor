@@ -166,6 +166,7 @@ void MainWindow::saveGraph() {
         vertexJson["x"] = vertex->xPos;
         vertexJson["y"] = vertex->yPos;
         vertexJson["radius"] = vertex->radius;
+        vertexJson["name"] = QString::fromStdString(vertex->GetName());
         qDebug()  << "Json vertex to save " << vertexJson;
         qDebug() << "Json pos ot save " << vertex->xPos << " " << vertex->yPos;
 
@@ -180,6 +181,7 @@ void MainWindow::saveGraph() {
         edgeJson["from"] = edge->from->id;
         edgeJson["to"] = edge->to->id;
         edgeJson["weight"] = edge->weight; // Если есть флаг ориентированности
+        edgeJson["name"] = QString::fromStdString(edge->GetName());
         edgesArray.append(edgeJson);
     }
     graphJson["edges"] = edgesArray;
@@ -248,11 +250,13 @@ void MainWindow::loadGraphFromJson() {
         qreal x = vertexJson["x"].toDouble();
         qreal y = vertexJson["y"].toDouble();
         qreal radius = vertexJson["radius"].toDouble();
+        QString name = vertexJson["name"].toString();
 
         // Создаём вершину
         GraphVertex* vertex = new GraphVertex(x, y, id, radius);
+        vertex->SetName(name.toStdString());
         idToVertexMap[id] = vertex;
-        g->addVertex(x, y, id, radius);
+        g->addVertex(vertex);
     }
 
     // Десериализация рёбер
@@ -262,6 +266,7 @@ void MainWindow::loadGraphFromJson() {
         int startVertexId = edgeJson["from"].toInt();
         int endVertexId = edgeJson["to"].toInt();
         double weight = edgeJson["weight"].toDouble();
+        QString name = edgeJson["name"].toString();
 
         // Получаем ссылки на начальную и конечную вершины
         GraphVertex* startVertex = idToVertexMap.value(startVertexId, nullptr);
@@ -270,6 +275,7 @@ void MainWindow::loadGraphFromJson() {
         if (startVertex && endVertex) {
             // Создаём ребро
             GraphEdge* edge = new GraphEdge(std::make_shared<GraphVertex>(startVertex), std::make_shared<GraphVertex>(endVertex));
+            edge->SetName(name.toStdString());
             edge->SetWeight(weight);
             g->addEdge(edge);
         } else {
