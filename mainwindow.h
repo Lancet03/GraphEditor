@@ -47,6 +47,8 @@ private slots:
 
     void on_CalcAdjacencyMatrix_clicked();
 
+    void on_GenerateStateMachine_clicked();
+
 private:
     Ui::MainWindow *ui;
     AdjacencyMatrix *matrixWindow;
@@ -54,6 +56,8 @@ private:
     QLabel *mousePosLabel;  // Метка для координат
     QLabel *zoomLevelLabel; // Метка для уровня зума
 
+    void generateStateMachine();
+    void generateCppCode(QTextStream& out);
     void saveGraph();
     void loadGraphFromJson();
 };
