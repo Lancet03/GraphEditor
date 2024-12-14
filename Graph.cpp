@@ -42,7 +42,7 @@ std::shared_ptr<GraphEdge> Graph::addEdge(int from_vertex_id, int to_vertex_id) 
 }
 
 std::shared_ptr<GraphEdge> Graph::addEdge(GraphEdge* edge) {
-    std::shared_ptr<GraphEdge> edge_sptr = std::make_shared<GraphEdge>(edge);
+    std::shared_ptr<GraphEdge> edge_sptr(edge);
     this->edges.push_back(edge_sptr);
     return edge_sptr;
 }

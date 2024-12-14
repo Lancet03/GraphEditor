@@ -59,7 +59,7 @@ qreal VertexCircle::getRadius() const
 
 void VertexCircle::setName(const QString &name) {
     this->name->setPlainText(name);
-    this->vertex->name = name.toStdString();
+    this->vertex->SetName(name.toStdString());
     updateNamePosition(); // Обновляем позицию текста
 }
 
