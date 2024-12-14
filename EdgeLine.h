@@ -29,6 +29,9 @@ public:
 
     void setName(const QString &name);
     QString getName() const;
+signals:
+    void stateChanged();
+
 protected:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override;

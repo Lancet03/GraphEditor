@@ -61,6 +61,8 @@ void VertexCircle::setName(const QString &name) {
     this->name->setPlainText(name);
     this->vertex->SetName(name.toStdString());
     updateNamePosition(); // Обновляем позицию текста
+
+    emit stateChanged();
 }
 
 QString VertexCircle::getName() const {

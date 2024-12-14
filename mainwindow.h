@@ -45,7 +45,7 @@ private slots:
 
     void on_new_graph_triggered();
 
-    void on_pushButton_clicked();
+    void on_CalcAdjacencyMatrix_clicked();
 
 private:
     Ui::MainWindow *ui;

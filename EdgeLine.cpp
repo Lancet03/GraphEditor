@@ -82,6 +82,8 @@ void EdgeLine::setName(const QString &name) {
     this->name->setPlainText(name);
     this->edge->SetName(name.toStdString());
     updateNamePosition(); // Обновляем позицию текста
+
+    emit stateChanged();
 }
 
 QString EdgeLine::getName() const {

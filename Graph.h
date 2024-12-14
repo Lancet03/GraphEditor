@@ -27,7 +27,7 @@ public:
     void removeEdge(GraphEdge* edge);
 
     int calcUniqueVertexId();
-     std::shared_ptr<GraphVertex> getVertexById(int id);
+    std::shared_ptr<GraphVertex> getVertexById(int id);
 
 private:
     double GetEdgeWeigth(std::shared_ptr<GraphVertex> from, std::shared_ptr<GraphVertex> to);

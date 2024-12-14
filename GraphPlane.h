@@ -49,7 +49,7 @@ signals:
     void zoomLevelChanged(qreal scale);                // Сигнал для изменения масштаба
     void mouseEntered();  // Сигнал, когда курсор входит в область
     void mouseLeft();     // Сигнал, когда курсор покидает область
-
+    void graphChanged(Graph* graph);
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect) override; // Отрисовка координатной сетки

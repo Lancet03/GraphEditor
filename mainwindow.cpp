@@ -293,8 +293,16 @@ void MainWindow::on_new_graph_triggered()
 }
 
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_CalcAdjacencyMatrix_clicked()
 {
-    this->graphPlane->displayAdjacencyMatrix();
+    if (!this->matrixWindow) {
+        this->matrixWindow = new AdjacencyMatrix(this);
+    }
+    this->matrixWindow->show();
+    this->graphPlane = this->findChild<GraphPlane*>("graphicsView");
+    this->matrixWindow->updateMatrix(this->graphPlane->graph);
+    QObject::connect(this->graphPlane, &GraphPlane::graphChanged, matrixWindow, &AdjacencyMatrix::updateMatrix);
+
+     // this->graphPlane->displayAdjacencyMatrix();
 }
 

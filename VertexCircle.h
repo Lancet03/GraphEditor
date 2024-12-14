@@ -40,6 +40,8 @@ public:
     void setName(const QString &name);
     QString getName() const;
     // void removeSelf();
+signals:
+    void stateChanged();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override; // Начало перемещения

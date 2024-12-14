@@ -60,6 +60,10 @@ void GraphPlane::ClearGraph() {
         delete vertex;
     }
     this->vertexCircles.clear();
+
+    this->graph = new Graph();
+
+    emit graphChanged(this->graph);
 }
 
 VertexCircle* GraphPlane::GetVertexById(int id) {
@@ -157,6 +161,12 @@ VertexCircle* GraphPlane::AddVertex(QPointF vertex_center) {
     this->graph->addVertex(circle->vertex);
     this->vertexCircles.push_back(circle);
 
+    // Подключаем сигнал изменения имени к обновлению матрицы
+    connect(circle, &VertexCircle::stateChanged, this, [this]() {
+        emit graphChanged(this->graph);
+    });
+    emit graphChanged(this->graph);
+
     return circle;
 }
 
@@ -165,6 +175,11 @@ VertexCircle* GraphPlane::AddVertex(std::shared_ptr<GraphVertex> vertex) {
     scene->addItem(circle); // Добавляем в сцену
 
     this->vertexCircles.push_back(circle);
+    // Подключаем сигнал изменения имени к обновлению матрицы
+    connect(circle, &VertexCircle::stateChanged, this, [this]() {
+        emit graphChanged(this->graph);
+    });
+    emit graphChanged(this->graph);
 
     return circle;
 }
@@ -186,16 +201,23 @@ void GraphPlane::RemoveVertex(VertexCircle* vertex) {
     this->scene->removeItem(vertex);
 
     this->graph->removeVertex(vertex->vertex);
+    emit graphChanged(this->graph);
 }
 
 EdgeLine* GraphPlane::AddEdge(VertexCircle *start, VertexCircle *end) {
-    EdgeLine *edge = new EdgeLine(start, end, this->graph);
-    this->graph->addEdge(edge->edge);
+    std::shared_ptr<GraphEdge> graphEdge = this->graph->addEdge(start->vertex->id, end->vertex->id);
+    // EdgeLine *edge = new EdgeLine(start, end, this->graph);
+    // this->graph->addEdge(edge->edge);
+    EdgeLine* edge = new EdgeLine(graphEdge.get(), start, end, this->graph);
     this->edgeLines.push_back(edge);
 
     // Добавляем линию на сцену
     scene->addItem(edge);
-
+    // Подключаем сигнал изменения имени к обновлению матрицы
+    connect(edge, &EdgeLine::stateChanged, this, [this]() {
+        emit graphChanged(this->graph);
+    });
+    emit graphChanged(this->graph);
     return edge;
 }
 
@@ -212,6 +234,11 @@ EdgeLine* GraphPlane::AddEdge(std::shared_ptr<GraphEdge> edge) {
     // Добавляем линию на сцену
     this->scene->addItem(edgeLine);
 
+    // Подключаем сигнал изменения имени к обновлению матрицы
+    connect(edgeLine, &EdgeLine::stateChanged, this, [this]() {
+        emit graphChanged(this->graph);
+    });
+    emit graphChanged(this->graph);
     return edgeLine;
 }
 
@@ -226,6 +253,7 @@ void GraphPlane::RemoveEdge(EdgeLine* edge) {
     this->scene->removeItem(edge);
 
     this->graph->removeEdge(edge->edge);
+    emit graphChanged(this->graph);
 }
 
 void GraphPlane::drawBackground(QPainter *painter, const QRectF &rect)
