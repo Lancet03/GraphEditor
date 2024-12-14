@@ -76,6 +76,10 @@ void GraphPlane::mousePressEvent(QMouseEvent *event)
     if (event->button() == Qt::LeftButton) {
         QGraphicsItem *item = scene->itemAt(scenePos, QTransform());
 
+        if (item && item->parentItem() && item->parentItem()->data(0).toString() == "VertexCircle") {
+            item = item->parentItem();
+        }
+
         if (item && item->data(0).toString() == "VertexCircle") {
             VertexCircle* selectedVertex = dynamic_cast<VertexCircle*>(item);
             if (this->mode == Mode::MOVE) {
@@ -86,6 +90,7 @@ void GraphPlane::mousePressEvent(QMouseEvent *event)
                 qDebug() << "Edit";
                 this->selectedCircle = selectedVertex;
             } else if (this->mode == Mode::ADD_EDGES) {
+                qDebug() << "Add edges ";
                 if (!this->firstSelectedCircle) {
                     firstSelectedCircle = selectedVertex;
                     firstSelectedCircle->setPen(QPen(Qt::green, 3));
@@ -110,6 +115,10 @@ void GraphPlane::mousePressEvent(QMouseEvent *event)
     } else if (event->button() == Qt::RightButton) {
         // Проверяем, есть ли объект под курсором
         QGraphicsItem *item = scene->itemAt(scenePos, QTransform());
+        if (item && item->parentItem() && item->parentItem()->data(0).toString() == "VertexCircle") {
+            item = item->parentItem();
+        }
+
         if (item->data(0).toString() == "VertexCircle") {
             VertexCircle* vertex = dynamic_cast<VertexCircle*>(item);
             // vertex->removeSelf();
@@ -178,6 +187,7 @@ void GraphPlane::RemoveVertex(VertexCircle* vertex) {
 EdgeLine* GraphPlane::AddEdge(VertexCircle *start, VertexCircle *end) {
     EdgeLine *edge = new EdgeLine(start, end, this->graph);
     this->graph->addEdge(edge->edge);
+    this->edgeLines.push_back(edge);
 
     // Добавляем линию на сцену
     scene->addItem(edge);

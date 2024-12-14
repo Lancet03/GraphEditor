@@ -286,3 +286,9 @@ void MainWindow::loadGraphFromJson() {
     this->graphPlane->SetGraph(g);
     QMessageBox::information(nullptr, "Load Graph", "Graph loaded successfully!");
 }
+
+void MainWindow::on_new_graph_triggered()
+{
+    this->graphPlane->ClearGraph();
+}
+

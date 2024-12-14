@@ -19,7 +19,12 @@ VertexCircle::VertexCircle(qreal x, qreal y, qreal radius, Graph* graph, QGraphi
 
     // Создаём текстовый элемент
     this->name = new QGraphicsTextItem(this);
-    name->setPlainText(""); // По умолчанию текст пуст
+
+    this->name->setParentItem(this);
+    // name->setFlag(QGraphicsItem::ItemIgnoresParentOpacity, true); // Полностью прозрачный для событий
+    this->name->setAcceptedMouseButtons(Qt::NoButton);
+    // name->setZValue(-1);
+    this->name->setPlainText(""); // По умолчанию текст пуст
     this->updateNamePosition();
 }
 
@@ -32,7 +37,8 @@ VertexCircle::VertexCircle(GraphVertex* vertex, Graph* graph, QGraphicsItem *par
 
     // Создаём текстовый элемент
     this->name = new QGraphicsTextItem(this);
-    name->setPlainText(QString::fromStdString(vertex->GetName())); // По умолчанию текст пуст
+    this->name->setAcceptedMouseButtons(Qt::NoButton);
+    name->setPlainText(QString::fromStdString(vertex->GetName()));
     this->updateNamePosition();
 }
 
@@ -152,6 +158,7 @@ void VertexCircle::setMovable(bool movable) {
 }
 
 void VertexCircle::moveTo(QPointF point) {
+
     this->vertex->MoveTo(point.x(), point.y());
     for (int i = 0; i < this->edges.count(); i++) {
         this->edges[i]->updatePosition();

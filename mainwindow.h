@@ -43,6 +43,8 @@ private slots:
 
     void on_open_triggered();
 
+    void on_new_graph_triggered();
+
 private:
     Ui::MainWindow *ui;
     AdjacencyMatrix *matrixWindow;

@@ -165,6 +165,7 @@
     </property>
     <addaction name="save"/>
     <addaction name="open"/>
+    <addaction name="new_graph"/>
    </widget>
    <addaction name="menu"/>
   </widget>
@@ -177,6 +178,11 @@
   <action name="open">
    <property name="text">
     <string>Открыть</string>
+   </property>
+  </action>
+  <action name="new_graph">
+   <property name="text">
+    <string>Новый</string>
    </property>
   </action>
  </widget>
