@@ -1,41 +1,37 @@
 #include "VertexCircle.h"
-#include <QGraphicsSceneMouseEvent>
-#include <QStyleOptionGraphicsItem>
 #include <QDebug>
-#include <QGraphicsScene>
-#include <QLineEdit>
 #include <QGraphicsProxyWidget>
+#include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
+#include <QLineEdit>
+#include <QStyleOptionGraphicsItem>
 
-VertexCircle::VertexCircle(qreal x, qreal y, qreal radius, Graph* graph, QGraphicsItem *parent)
-    : QGraphicsEllipseItem(parent), m_radius(radius)
-{
+VertexCircle::VertexCircle(qreal x, qreal y, qreal radius, Graph *graph,
+                           QGraphicsItem *parent)
+    : QGraphicsEllipseItem(parent), m_radius(radius) {
     this->vertex = new GraphVertex(x, y, graph->calcUniqueVertexId());
     this->vertex->radius = radius;
     this->m_radius = radius;
     this->graph = graph;
 
-
     this->SetStartParameters();
 
-    // Создаём текстовый элемент
     this->name = new QGraphicsTextItem(this);
 
     this->name->setParentItem(this);
-    // name->setFlag(QGraphicsItem::ItemIgnoresParentOpacity, true); // Полностью прозрачный для событий
     this->name->setAcceptedMouseButtons(Qt::NoButton);
-    // name->setZValue(-1);
-    this->name->setPlainText(""); // По умолчанию текст пуст
+    this->name->setPlainText("");
     this->updateNamePosition();
 }
 
-VertexCircle::VertexCircle(GraphVertex* vertex, Graph* graph, QGraphicsItem *parent) {
+VertexCircle::VertexCircle(GraphVertex *vertex, Graph *graph,
+                           QGraphicsItem *parent) {
     this->vertex = vertex;
     this->graph = graph;
     this->m_radius = this->vertex->radius;
 
     this->SetStartParameters();
 
-    // Создаём текстовый элемент
     this->name = new QGraphicsTextItem(this);
     this->name->setAcceptedMouseButtons(Qt::NoButton);
     name->setPlainText(QString::fromStdString(vertex->GetName()));
@@ -43,86 +39,68 @@ VertexCircle::VertexCircle(GraphVertex* vertex, Graph* graph, QGraphicsItem *par
 }
 
 void VertexCircle::SetStartParameters() {
-    // Устанавливаем начальные параметры
-    setRect(this->vertex->xPos - this->m_radius, this->vertex->yPos - this->m_radius, 2 * this->m_radius, 2 * this->m_radius);
-    // Устанавливаем базовый стиль
+    setRect(this->vertex->xPos - this->m_radius,
+            this->vertex->yPos - this->m_radius, 2 * this->m_radius,
+            2 * this->m_radius);
     setPen(QPen(Qt::blue, 2));
     setBrush(QBrush(Qt::cyan));
     setFlags(QGraphicsItem::ItemIsSelectable);
     this->setData(0, "VertexCircle");
 }
 
-qreal VertexCircle::getRadius() const
-{
-    return m_radius;
-}
+qreal VertexCircle::getRadius() const { return m_radius; }
 
 void VertexCircle::setName(const QString &name) {
     this->name->setPlainText(name);
     this->vertex->SetName(name.toStdString());
-    updateNamePosition(); // Обновляем позицию текста
+    updateNamePosition();
 
     emit stateChanged();
 }
 
-QString VertexCircle::getName() const {
-    return name->toPlainText();
-}
+QString VertexCircle::getName() const { return name->toPlainText(); }
 
 void VertexCircle::updateNamePosition() {
-    // Располагаем текст в центре вершины
     QPointF center = boundingRect().center();
-    // QPointF center = rect().center();
     this->name->setPos(center.x() - this->name->boundingRect().width() / 2,
                      center.y() - this->name->boundingRect().height() / 2);
 }
 
-void VertexCircle::setRadius(qreal radius)
-{
+void VertexCircle::setRadius(qreal radius) {
     qDebug() << "Vertex radius changed " << radius;
-    // this->vertex->radius = radius;
     this->vertex->SetRadius(radius);
 
     this->m_radius = radius;
-    // Обновляем размер круга
-    setRect(rect().center().x() - radius, rect().center().y() - radius, 2 * radius, 2 * radius);
+    setRect(rect().center().x() - radius, rect().center().y() - radius,
+            2 * radius, 2 * radius);
 }
 
-void VertexCircle::addEdge(EdgeLine* edge) {
+void VertexCircle::addEdge(EdgeLine *edge) {
     if (!edges.contains(edge)) {
         edges.append(edge);
     }
 }
 
-void VertexCircle::removeEdge(EdgeLine* edge) {
-    edges.removeAll(edge);
-}
+void VertexCircle::removeEdge(EdgeLine *edge) { edges.removeAll(edge); }
 
-const QList<EdgeLine*>& VertexCircle::getEdges() const {
-    return edges;
-}
+const QList<EdgeLine *> &VertexCircle::getEdges() const { return edges; }
 
-int VertexCircle::GetId() {
-    return this->vertex->id;
-}
+int VertexCircle::GetId() { return this->vertex->id; }
 
-void VertexCircle::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    // Изменяем стиль при начале перемещения
-    setPen(QPen(Qt::red, 3)); // Более толстая красная обводка
-    setBrush(QBrush(Qt::yellow)); // Жёлтая заливка
-    QGraphicsEllipseItem::mousePressEvent(event); // Передаём управление базовому классу
-}
+void VertexCircle::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    setPen(QPen(Qt::red, 3));
+    setBrush(QBrush(Qt::yellow));
+    QGraphicsEllipseItem::mousePressEvent(
+        event);
 
-void VertexCircle::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
-{
-    // Восстанавливаем стиль после перемещения
+void VertexCircle::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     setPen(QPen(Qt::blue, 2));
     setBrush(QBrush(Qt::cyan));
-    QGraphicsEllipseItem::mouseReleaseEvent(event); // Передаём управление базовому классу
+    QGraphicsEllipseItem::mouseReleaseEvent(
+        event);
 }
 
-void VertexCircle::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) {
+void VertexCircle::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) {
     this->editName();
     QGraphicsEllipseItem::mouseDoubleClickEvent(event);
 }
@@ -133,21 +111,18 @@ void VertexCircle::editName() {
         return;
     }
 
-    // Создаём текстовое поле для редактирования
-    QLineEdit* lineEdit = new QLineEdit(this->name->toPlainText());
+    QLineEdit *lineEdit = new QLineEdit(this->name->toPlainText());
     lineEdit->setAlignment(Qt::AlignCenter);
 
-    // Добавляем текстовое поле в сцену через ProxyWidget
-    QGraphicsProxyWidget* proxy = scene()->addWidget(lineEdit);
+    // Add text field in scene through ProxyWidget
+    QGraphicsProxyWidget *proxy = scene()->addWidget(lineEdit);
     proxy->setPos(this->name->scenePos());
 
-    // Устанавливаем фокус на поле ввода
     lineEdit->setFocus();
 
-    // Сигнал на завершение редактирования
     connect(lineEdit, &QLineEdit::editingFinished, [this, lineEdit, proxy]() {
         setName(lineEdit->text());
-        proxy->deleteLater(); // Корректно удаляем ProxyWidget
+        proxy->deleteLater(); // correctly delete ProxyWidget
     });
 }
 
@@ -155,7 +130,7 @@ void VertexCircle::setMovable(bool movable) {
     if (movable) {
         setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
     } else {
-        setFlags(QGraphicsItem::ItemIsSelectable); // Только выделение
+        setFlags(QGraphicsItem::ItemIsSelectable);
     }
 }
 
@@ -167,21 +142,19 @@ void VertexCircle::moveTo(QPointF point) {
     }
 }
 
-void VertexCircle::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
-    // Проверяем, является ли объект выбранным
+void VertexCircle::paint(QPainter *painter,
+                         const QStyleOptionGraphicsItem *option,
+                         QWidget *widget) {
     bool isSelected = option->state & QStyle::State_Selected;
 
     if (isSelected) {
-        // Кастомная отрисовка для выбранного объекта
-        painter->setPen(QPen(Qt::red, 3, Qt::DashLine)); // Красная пунктирная обводка
-        painter->setBrush(QBrush(Qt::yellow));          // Жёлтая заливка
+        painter->setPen(
+            QPen(Qt::red, 3, Qt::DashLine));
+        painter->setBrush(QBrush(Qt::yellow));
     } else {
-        // Отрисовка для обычного состояния
-        painter->setPen(QPen(Qt::blue, 2)); // Синяя обводка
-        painter->setBrush(QBrush(Qt::cyan)); // Голубая заливка
+        painter->setPen(QPen(Qt::blue, 2));
+        painter->setBrush(QBrush(Qt::cyan));
     }
 
-    // Рисуем эллипс
     painter->drawEllipse(rect());
 }
