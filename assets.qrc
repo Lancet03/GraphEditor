@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/assets">
         <file>img/graph.svg</file>
+        <file>icons/GraphIcon.ico</file>
+        <file>icons/GraphIcon.svg</file>
     </qresource>
 </RCC>
