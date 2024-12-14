@@ -14,7 +14,8 @@ EdgeLine::EdgeLine(VertexCircle *start, VertexCircle *end, Graph* graph, QGraphi
     : QGraphicsLineItem(parent), startVertex(start), endVertex(end)
 {
     this->graph = graph;
-    this->edge = new GraphEdge(std::make_shared<GraphVertex>(start->vertex), std::make_shared<GraphVertex>(end->vertex));
+
+    this->edge = new GraphEdge(std::shared_ptr<GraphVertex>(start->vertex), std::shared_ptr<GraphVertex>(end->vertex));
 
     // Устанавливаем стиль линии
     setPen(QPen(Qt::black, 2));

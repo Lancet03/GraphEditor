@@ -8,7 +8,7 @@
 class GraphEdge
 {
 public:
-    GraphEdge(std::shared_ptr<GraphVertex> from, std::shared_ptr<GraphVertex> to, std::string name = "", double weigth = 1);
+    GraphEdge(std::shared_ptr<GraphVertex> from, std::shared_ptr<GraphVertex> to, std::string name = "", double weight = 1);
     GraphEdge(GraphEdge* edge);
     // int from;
     // int to;

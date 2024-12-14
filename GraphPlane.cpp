@@ -5,6 +5,10 @@
 #include <QGraphicsEllipseItem>
 #include <QWheelEvent>
 #include <QDebug>
+#include <QVBoxLayout>
+#include <QHeaderView>
+#include <QTableWidget>
+#include <QDialog>
 
 #include <cmath>
 #include <typeinfo>
@@ -203,6 +207,7 @@ EdgeLine* GraphPlane::AddEdge(std::shared_ptr<GraphEdge> edge) {
     VertexCircle* end = this->GetVertexById(to->id);
 
     EdgeLine *edgeLine = new EdgeLine(edge.get(), start, end, this->graph);
+    this->edgeLines.push_back(edgeLine);
 
     // Добавляем линию на сцену
     this->scene->addItem(edgeLine);
@@ -367,4 +372,53 @@ void GraphPlane::leaveEvent(QEvent *event)
 {
     QGraphicsView::leaveEvent(event);
     emit mouseLeft(); // Излучаем сигнал о выходе
+}
+
+
+void GraphPlane::displayAdjacencyMatrix() {
+    // Создаём окно для отображения матрицы
+    QDialog* dialog = new QDialog();
+    dialog->setWindowTitle("Adjacency Matrix");
+    dialog->resize(600, 400);
+
+    // Создаём таблицу
+    QTableWidget* table = new QTableWidget(dialog);
+
+    // Рассчитываем матрицу смежности
+    // auto matrix = calculateAdjacencyMatrix();
+    auto matrix = this->graph->BuildCorrespMatrix();
+
+    // Устанавливаем размеры таблицы
+    int vertexCount = this->vertexCircles.size();
+    table->setRowCount(vertexCount);
+    table->setColumnCount(vertexCount);
+
+    // Настраиваем заголовки строк и столбцов
+    QStringList headers;
+    for (const auto& vertex : this->vertexCircles) {
+        headers << QString::fromStdString(vertex->vertex->GetName());
+    }
+    table->setHorizontalHeaderLabels(headers);
+    table->setVerticalHeaderLabels(headers);
+
+    // Заполняем таблицу данными
+    for (int i = 0; i < vertexCount; ++i) {
+        for (int j = 0; j < vertexCount; ++j) {
+            QTableWidgetItem* item = new QTableWidgetItem(QString::number(matrix[i][j]));
+            item->setTextAlignment(Qt::AlignCenter);
+            table->setItem(i, j, item);
+        }
+    }
+
+    // Настраиваем таблицу
+    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    table->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    // Упаковываем таблицу в диалоговое окно
+    QVBoxLayout* layout = new QVBoxLayout(dialog);
+    layout->addWidget(table);
+    dialog->setLayout(layout);
+
+    // Показываем окно
+    dialog->exec();
 }

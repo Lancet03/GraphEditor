@@ -41,6 +41,7 @@ public:
     Mode GetMode(Mode m) { return this->mode; };
 
     VertexCircle* GetVertexById(int id);
+    void displayAdjacencyMatrix();
 
     void ClearGraph();
 signals:

@@ -292,3 +292,9 @@ void MainWindow::on_new_graph_triggered()
     this->graphPlane->ClearGraph();
 }
 
+
+void MainWindow::on_pushButton_clicked()
+{
+    this->graphPlane->displayAdjacencyMatrix();
+}
+

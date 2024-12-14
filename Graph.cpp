@@ -106,7 +106,7 @@ std::vector<std::vector<double>> Graph::BuildCorrespMatrix() {
 
         for (int j = 0; j < matrixSize; j++) {
             std::shared_ptr<GraphVertex> vertex_j = this->vertexes[j];
-            matrix[i][j] = this->GetEdgeWeigth(std::make_shared<GraphVertex>(this->vertexes[i]), std::make_shared<GraphVertex>(this->vertexes[j]));
+            matrix[i][j] = this->GetEdgeWeigth(this->vertexes[i], this->vertexes[j]);
         }
     }
 
