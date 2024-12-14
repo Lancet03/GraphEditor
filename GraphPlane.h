@@ -20,20 +20,18 @@ class GraphPlane : public QGraphicsView
 public:
     explicit GraphPlane(QWidget *parent = nullptr);
 
-    // std::vector<VertexCircle> vertexCircles;
-    // std::vector<EdgeLine> edgeLines;
     QList<VertexCircle*> vertexCircles;
     VertexCircle* AddVertex(QPointF vertex_center);
     VertexCircle* AddVertex(std::shared_ptr<GraphVertex> vertex);
+    VertexCircle* RegisterVertex(VertexCircle* circle);
     void RemoveVertex(VertexCircle* vertex);
 
     QList<EdgeLine*> edgeLines;
     EdgeLine* AddEdge(VertexCircle *start, VertexCircle *end);
     EdgeLine* AddEdge(std::shared_ptr<GraphEdge> edge);
+    EdgeLine* RegisterEdge(EdgeLine* edgeLine);
     void RemoveEdge(EdgeLine* edge);
 
-
-    // Получение текущего масштаба
     qreal getCurrentScale() const;
     Graph* graph;
     Graph* SetGraph(Graph* g);
@@ -44,37 +42,33 @@ public:
 
     void ClearGraph();
 signals:
-    void mousePositionChanged(const QPointF &scenePos); // Сигнал для обновления координат
-    void zoomLevelChanged(qreal scale);                // Сигнал для изменения масштаба
-    void mouseEntered();  // Сигнал, когда курсор входит в область
-    void mouseLeft();     // Сигнал, когда курсор покидает область
+    void mousePositionChanged(const QPointF &scenePos);
+    void zoomLevelChanged(qreal scale);
+    void mouseEntered();
+    void mouseLeft();
     void graphChanged(Graph* graph);
 
 protected:
-    void drawBackground(QPainter *painter, const QRectF &rect) override; // Отрисовка координатной сетки
-    void wheelEvent(QWheelEvent *event) override;                       // Масштабирование колесом мыши
-
-    void enterEvent(QEvent *event) override;  // Событие входа курсора в область
-    void leaveEvent(QEvent *event) override;  // Событие выхода курсора из област
-    void mousePressEvent(QMouseEvent *event) override; // Обработка кликов мыши
-    void mouseMoveEvent(QMouseEvent *event) override;                   // Отслеживание движения мыши
+    void drawBackground(QPainter *painter, const QRectF &rect) override;
+    void wheelEvent(QWheelEvent *event) override;
+    void enterEvent(QEvent *event) override;
+    void leaveEvent(QEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
-    qreal currentScale; // Текущий уровень масштаба
+    qreal currentScale;
     Mode mode;
-    QGraphicsScene *scene; // Сцена для управления объектами
-    VertexCircle *firstSelectedCircle = nullptr;  // Первый выбранный кружок
-    VertexCircle *secondSelectedCircle = nullptr; // Второй выбранный кружок
-    QGraphicsLineItem *tempLine = nullptr;        // Временная линия
+    QGraphicsScene *scene;
+    VertexCircle *firstSelectedCircle = nullptr;
+    VertexCircle *secondSelectedCircle = nullptr;
+    QGraphicsLineItem *tempLine = nullptr;
 
     VertexCircle* selectedCircle = nullptr;
 
-    bool isDragging = false;         // Флаг режима перетаскивания
-    QPoint lastMousePos;             // Последняя позиция мыши
-
-    // void connectCircles(VertexCircle *start, VertexCircle *end); // Метод для соединения кружков линией
-    void updateEdge(GraphEdge &edge); // Метод для обновления линии
+    bool isDragging = false;
+    QPoint lastMousePos;
 };
 
 #endif // GRAPHPLANE_H
