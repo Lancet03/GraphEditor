@@ -126,11 +126,19 @@ void GraphPlane::mousePressEvent(QMouseEvent *event)
         if (item && item->parentItem() && item->parentItem()->data(0).toString() == "VertexCircle") {
             item = item->parentItem();
         }
-
         if (item->data(0).toString() == "VertexCircle") {
             VertexCircle* vertex = dynamic_cast<VertexCircle*>(item);
             // vertex->removeSelf();
             this->RemoveVertex(vertex);
+        }
+
+        if (item && item->parentItem() && item->parentItem()->data(0).toString() == "EdgeLine") {
+            item = item->parentItem();
+        }
+        if (item->data(0).toString() == "EdgeLine") {
+            EdgeLine* edge = dynamic_cast<EdgeLine*>(item);
+            // vertex->removeSelf();
+            this->RemoveEdge(edge);
         }
     } else if (event->button() == Qt::MiddleButton) {
         this->isDragging = true;

@@ -17,9 +17,8 @@ EdgeLine::EdgeLine(VertexCircle *start, VertexCircle *end, Graph* graph, QGraphi
 
     this->edge = new GraphEdge(std::shared_ptr<GraphVertex>(start->vertex), std::shared_ptr<GraphVertex>(end->vertex));
 
-    // Устанавливаем стиль линии
-    setPen(QPen(Qt::black, 2));
 
+    this->SetStartParameters();
     // Создаём текстовый элемент
     this->name = new QGraphicsTextItem(this);
     this->name->setPlainText(""); // По умолчанию текст пуст
@@ -37,8 +36,7 @@ EdgeLine::EdgeLine(GraphEdge* edge, VertexCircle *start, VertexCircle *end, Grap
     this->graph = graph;
     this->edge = edge;
 
-    // Устанавливаем стиль линии
-    setPen(QPen(Qt::black, 2));
+    this->SetStartParameters();
 
     // Создаём текстовый элемент
     this->name = new QGraphicsTextItem(this);
@@ -49,6 +47,12 @@ EdgeLine::EdgeLine(GraphEdge* edge, VertexCircle *start, VertexCircle *end, Grap
     // Добавляем линию в списки кружков
     startVertex->addEdge(this);
     endVertex->addEdge(this);
+}
+
+void EdgeLine::SetStartParameters() {
+    // Устанавливаем стиль линии
+    setPen(QPen(Qt::black, 2));
+    this->setData(0, "EdgeLine");
 }
 
 void EdgeLine::updatePosition()

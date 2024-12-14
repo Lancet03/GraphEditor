@@ -41,6 +41,7 @@ private:
     QGraphicsTextItem* name; // Текстовый элемент для имени ребра
     void updateNamePosition();
     void editName();
+    void SetStartParameters();
 };
 
 #endif // EDGELINE_H

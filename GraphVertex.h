@@ -11,7 +11,6 @@ public:
     GraphVertex(const std::shared_ptr<GraphVertex>& vertex);
     GraphVertex(GraphVertex* vertex);
 
-
     int id;
 
     void SetName(std::string name) { this->name = name; };
