@@ -1,81 +1,70 @@
 #include "EdgeLine.h"
 #include "VertexCircle.h"
-#include <QPen>
+#include <QDebug>
+#include <QGraphicsProxyWidget>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
-#include <QGraphicsProxyWidget>
 #include <QLineEdit>
-#include <QDebug>
+#include <QPen>
 
-#include <memory>
 #include <cmath>
+#include <memory>
 
-EdgeLine::EdgeLine(VertexCircle *start, VertexCircle *end, Graph* graph, QGraphicsItem *parent)
-    : QGraphicsLineItem(parent), startVertex(start), endVertex(end)
-{
+EdgeLine::EdgeLine(VertexCircle *start, VertexCircle *end, Graph *graph,
+                   QGraphicsItem *parent)
+    : QGraphicsLineItem(parent), startVertex(start), endVertex(end) {
     this->graph = graph;
 
-    this->edge = new GraphEdge(std::shared_ptr<GraphVertex>(start->vertex), std::shared_ptr<GraphVertex>(end->vertex));
-
+    this->edge = new GraphEdge(std::shared_ptr<GraphVertex>(start->vertex),
+                               std::shared_ptr<GraphVertex>(end->vertex));
 
     this->SetStartParameters();
-    // Создаём текстовый элемент
+
     this->name = new QGraphicsTextItem(this);
-    this->name->setPlainText(""); // По умолчанию текст пуст
-    // Обновляем положение линии
+    this->name->setPlainText("");
+
     updatePosition();
 
-    // Добавляем линию в списки кружков
     startVertex->addEdge(this);
     endVertex->addEdge(this);
 }
 
-EdgeLine::EdgeLine(GraphEdge* edge, VertexCircle *start, VertexCircle *end, Graph* graph, QGraphicsItem *parent)
-    : QGraphicsLineItem(parent), startVertex(start), endVertex(end)
-{
+EdgeLine::EdgeLine(GraphEdge *edge, VertexCircle *start, VertexCircle *end,
+                   Graph *graph, QGraphicsItem *parent)
+    : QGraphicsLineItem(parent), startVertex(start), endVertex(end) {
     this->graph = graph;
     this->edge = edge;
 
     this->SetStartParameters();
 
-    // Создаём текстовый элемент
     this->name = new QGraphicsTextItem(this);
     this->name->setPlainText(QString::fromStdString(edge->GetName()));
-    // Обновляем положение линии
+
     updatePosition();
 
-    // Добавляем линию в списки кружков
     startVertex->addEdge(this);
     endVertex->addEdge(this);
 }
 
 void EdgeLine::SetStartParameters() {
-    // Устанавливаем стиль линии
     setPen(QPen(Qt::black, 2));
     this->setData(0, "EdgeLine");
 }
 
-void EdgeLine::updatePosition()
-{
+void EdgeLine::updatePosition() {
     this->prepareGeometryChange();
-    // Координаты центров вершин
+
     QPointF startCenter = startVertex->sceneBoundingRect().center();
     QPointF endCenter = endVertex->sceneBoundingRect().center();
 
-    // Вектор от начала к концу
     QLineF line(startCenter, endCenter);
 
-    // Радиусы кружков
     qreal startRadius = startVertex->getRadius();
     qreal endRadius = endVertex->getRadius();
 
-    // Пересечение линии с окружностью начальной вершины
     QPointF startPoint = line.pointAt(startRadius / line.length());
-
-    // Пересечение линии с окружностью конечной вершины
     QPointF endPoint = line.pointAt(1.0 - (endRadius / line.length()));
 
-    // Устанавливаем линию
     setLine(QLineF(startPoint, endPoint));
 
     this->updateNamePosition();
@@ -85,45 +74,40 @@ void EdgeLine::updatePosition()
 void EdgeLine::setName(const QString &name) {
     this->name->setPlainText(name);
     this->edge->SetName(name.toStdString());
-    updateNamePosition(); // Обновляем позицию текста
+    updateNamePosition();
 
     emit stateChanged();
 }
 
-QString EdgeLine::getName() const {
-    return this->name->toPlainText();
-}
+QString EdgeLine::getName() const { return this->name->toPlainText(); }
 
 void EdgeLine::updateNamePosition() {
-    // Располагаем текст посередине линии
     QLineF line = this->line();
-    QPointF midpoint = line.pointAt(0.5); // Середина линии
+    QPointF midpoint = line.pointAt(0.5);
     this->name->setPos(midpoint.x() - this->name->boundingRect().width() / 2,
                      midpoint.y() - this->name->boundingRect().height() / 2);
 }
 
 QRectF EdgeLine::boundingRect() const {
-    qreal extra = 10.0; // Дополнительное пространство для стрелки
+    qreal extra = 10.0; // Дополнительное пространство для стрелки // Extra space for arrow
     QRectF lineRect = QGraphicsLineItem::boundingRect();
-    return lineRect.adjusted(-extra, -extra, extra, extra); // Расширяем границы
+    return lineRect.adjusted(-extra, -extra, extra, extra); // Expand boundaries
 }
 
-void EdgeLine::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
-    // Рисуем линию
+void EdgeLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                     QWidget *widget) {
     QGraphicsLineItem::paint(painter, option, widget);
 
-    // Если ребро ориентированное, рисуем стрелку
     drawArrow(painter);
 }
 
-void EdgeLine::drawArrow(QPainter* painter) {
+void EdgeLine::drawArrow(QPainter *painter) {
     const qreal arrowSize = 10.0;
 
     QLineF line = this->line();
     QPointF p1 = line.p1();
     QPointF p2 = line.p2();
 
-    // Вычисляем направление стрелки
     double angle = std::atan2(-line.dy(), line.dx());
 
     QPointF arrowP1 = p2 + QPointF(std::sin(angle - M_PI / 3) * arrowSize,
@@ -138,7 +122,7 @@ void EdgeLine::drawArrow(QPainter* painter) {
     painter->drawPolygon(arrowHead);
 }
 
-void EdgeLine::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) {
+void EdgeLine::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsLineItem::mouseDoubleClickEvent(event);
     editName();
 }
@@ -149,20 +133,17 @@ void EdgeLine::editName() {
         return;
     }
 
-    // Создаём текстовое поле для редактирования
-    QLineEdit* lineEdit = new QLineEdit(this->name->toPlainText());
+    QLineEdit *lineEdit = new QLineEdit(this->name->toPlainText());
     lineEdit->setAlignment(Qt::AlignCenter);
 
-    // Добавляем текстовое поле в сцену через ProxyWidget
-    QGraphicsProxyWidget* proxy = scene()->addWidget(lineEdit);
+    // Add text field in scene through ProxyWidget
+    QGraphicsProxyWidget *proxy = scene()->addWidget(lineEdit);
     proxy->setPos(this->name->scenePos());
 
-    // Устанавливаем фокус на поле ввода
     lineEdit->setFocus();
 
-    // Сигнал на завершение редактирования
     connect(lineEdit, &QLineEdit::editingFinished, [this, lineEdit, proxy]() {
         setName(lineEdit->text());
-        proxy->deleteLater(); // Корректно удаляем ProxyWidget
+        proxy->deleteLater(); // Correctly delete ProxyWidget
     });
 }

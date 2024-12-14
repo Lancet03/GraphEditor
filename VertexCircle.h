@@ -39,7 +39,6 @@ public:
 
     void setName(const QString &name);
     QString getName() const;
-    // void removeSelf();
 signals:
     void stateChanged();
 
@@ -50,9 +49,9 @@ protected:
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override;
 
 private:
-    qreal m_radius; // Радиус круга
-    QList<EdgeLine*> edges; // Список линий, связанных с этим кружком
-    QGraphicsTextItem* name; // Текстовый элемент для имени вершины
+    qreal m_radius;
+    QList<EdgeLine*> edges;
+    QGraphicsTextItem* name;
     void updateNamePosition();
     void SetStartParameters();
     void editName();
