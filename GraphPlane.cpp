@@ -139,9 +139,19 @@ void GraphPlane::mousePressEvent(QMouseEvent *event) {
         this->isDragging = true;
         // по нажатию средней кнопки мыши создаем событие ее отпускания выставляем
         // моду перетаскивания и создаем событие зажатой левой кнопки мыши
-        QMouseEvent releaseEvent(QEvent::MouseButtonRelease, event->localPos(),
-                                 event->screenPos(), event->windowPos(),
-                                 Qt::LeftButton, nullptr, event->modifiers());
+        // QMouseEvent releaseEvent(QEvent::MouseButtonRelease, event->localPos(),
+        //                          event->screenPos(), event->windowPos(),
+        //                          Qt::LeftButton, nullptr, event->modifiers());
+        QMouseEvent releaseEvent(
+            QEvent::MouseButtonPress,
+            event->position(),
+            event->globalPosition(),
+            event->scenePosition(),
+            Qt::LeftButton,
+            event->buttons() | Qt::LeftButton,
+            event->modifiers(),
+            event->pointingDevice()
+            );
 
         QGraphicsView::mouseReleaseEvent(&releaseEvent);
 
@@ -348,7 +358,7 @@ void GraphPlane::mouseReleaseEvent(QMouseEvent *event) {
     QGraphicsView::mouseReleaseEvent(event);
 }
 
-void GraphPlane::enterEvent(QEvent *event) {
+void GraphPlane::enterEvent(QEnterEvent *event) {
     QGraphicsView::enterEvent(event);
     emit mouseEntered();
 }

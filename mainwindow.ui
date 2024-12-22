@@ -25,6 +25,21 @@
     </size>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
@@ -32,8 +47,33 @@
       </property>
       <widget class="QWidget" name="page">
        <layout class="QGridLayout" name="stackedLayout">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>0</number>
+        </property>
         <item row="2" column="0">
-         <widget class="GraphPlane" name="graphicsView"/>
+         <widget class="GraphPlane" name="graphicsView">
+          <property name="focusPolicy">
+           <enum>Qt::FocusPolicy::StrongFocus</enum>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+         </widget>
         </item>
         <item row="1" column="0">
          <widget class="QWidget" name="instrumentsWidget" native="true">
@@ -49,7 +89,25 @@
             <height>100</height>
            </size>
           </property>
+          <property name="styleSheet">
+           <string notr="true">border-bottom : 1px solid #000</string>
+          </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QPushButton" name="AddEdges">
              <property name="minimumSize">
@@ -63,6 +121,42 @@
                <width>100</width>
                <height>16777215</height>
               </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton {
+    background-color: #e0e0e0;  /* Светло-серый фон для обычного состояния */
+    color: #000000;             /* Чёрный текст */
+    border: none;               /* Без границ */
+    border-radius: 4px;         /* Скруглённые углы */
+    padding: 8px 16px;          /* Внутренние отступы */
+    font-size: 14px;            /* Размер текста */
+    font-weight: 500;           /* Средняя толщина текста */
+    text-transform: uppercase;  /* Заглавные буквы */
+    transition: background-color 0.3s ease; /* Плавный переход цвета */
+}
+
+QPushButton:hover {
+    background-color: #d6d6d6;  /* Более тёмный серый при наведении */
+}
+
+QPushButton:checked {
+    background-color: #6200ee;  /* Основной цвет для активного состояния */
+    color: white;               /* Белый текст */
+    border-radius: 4px;         /* Скруглённые углы остаются */
+}
+
+QPushButton:checked:hover {
+    background-color: #3700b3;  /* Тёмно-фиолетовый при наведении в активном состоянии */
+}
+
+QPushButton:pressed {
+    background-color: #bdbdbd;  /* Цвет нажатия */
+}
+
+QPushButton:checked:pressed {
+    background-color: #2a0080;  /* Более тёмный оттенок в активном состоянии при нажатии */
+}
+</string>
              </property>
              <property name="text">
               <string>addEdge</string>
@@ -83,6 +177,42 @@
                <height>16777215</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton {
+    background-color: #e0e0e0;  /* Светло-серый фон для обычного состояния */
+    color: #000000;             /* Чёрный текст */
+    border: none;               /* Без границ */
+    border-radius: 4px;         /* Скруглённые углы */
+    padding: 8px 16px;          /* Внутренние отступы */
+    font-size: 14px;            /* Размер текста */
+    font-weight: 500;           /* Средняя толщина текста */
+    text-transform: uppercase;  /* Заглавные буквы */
+    transition: background-color 0.3s ease; /* Плавный переход цвета */
+}
+
+QPushButton:hover {
+    background-color: #d6d6d6;  /* Более тёмный серый при наведении */
+}
+
+QPushButton:checked {
+    background-color: #6200ee;  /* Основной цвет для активного состояния */
+    color: white;               /* Белый текст */
+    border-radius: 4px;         /* Скруглённые углы остаются */
+}
+
+QPushButton:checked:hover {
+    background-color: #3700b3;  /* Тёмно-фиолетовый при наведении в активном состоянии */
+}
+
+QPushButton:pressed {
+    background-color: #bdbdbd;  /* Цвет нажатия */
+}
+
+QPushButton:checked:pressed {
+    background-color: #2a0080;  /* Более тёмный оттенок в активном состоянии при нажатии */
+}
+</string>
+             </property>
              <property name="text">
               <string>addVertex</string>
              </property>
@@ -101,6 +231,42 @@
                <width>140</width>
                <height>16777215</height>
               </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton {
+    background-color: #e0e0e0;  /* Светло-серый фон для обычного состояния */
+    color: #000000;             /* Чёрный текст */
+    border: none;               /* Без границ */
+    border-radius: 4px;         /* Скруглённые углы */
+    padding: 8px 16px;          /* Внутренние отступы */
+    font-size: 14px;            /* Размер текста */
+    font-weight: 500;           /* Средняя толщина текста */
+    text-transform: uppercase;  /* Заглавные буквы */
+    transition: background-color 0.3s ease; /* Плавный переход цвета */
+}
+
+QPushButton:hover {
+    background-color: #d6d6d6;  /* Более тёмный серый при наведении */
+}
+
+QPushButton:checked {
+    background-color: #6200ee;  /* Основной цвет для активного состояния */
+    color: white;               /* Белый текст */
+    border-radius: 4px;         /* Скруглённые углы остаются */
+}
+
+QPushButton:checked:hover {
+    background-color: #3700b3;  /* Тёмно-фиолетовый при наведении в активном состоянии */
+}
+
+QPushButton:pressed {
+    background-color: #bdbdbd;  /* Цвет нажатия */
+}
+
+QPushButton:checked:pressed {
+    background-color: #2a0080;  /* Более тёмный оттенок в активном состоянии при нажатии */
+}
+</string>
              </property>
              <property name="text">
               <string>viewMode</string>
@@ -121,6 +287,42 @@
                <height>16777215</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton {
+    background-color: #e0e0e0;  /* Светло-серый фон для обычного состояния */
+    color: #000000;             /* Чёрный текст */
+    border: none;               /* Без границ */
+    border-radius: 4px;         /* Скруглённые углы */
+    padding: 8px 16px;          /* Внутренние отступы */
+    font-size: 14px;            /* Размер текста */
+    font-weight: 500;           /* Средняя толщина текста */
+    text-transform: uppercase;  /* Заглавные буквы */
+    transition: background-color 0.3s ease; /* Плавный переход цвета */
+}
+
+QPushButton:hover {
+    background-color: #d6d6d6;  /* Более тёмный серый при наведении */
+}
+
+QPushButton:checked {
+    background-color: #6200ee;  /* Основной цвет для активного состояния */
+    color: white;               /* Белый текст */
+    border-radius: 4px;         /* Скруглённые углы остаются */
+}
+
+QPushButton:checked:hover {
+    background-color: #3700b3;  /* Тёмно-фиолетовый при наведении в активном состоянии */
+}
+
+QPushButton:pressed {
+    background-color: #bdbdbd;  /* Цвет нажатия */
+}
+
+QPushButton:checked:pressed {
+    background-color: #2a0080;  /* Более тёмный оттенок в активном состоянии при нажатии */
+}
+</string>
+             </property>
              <property name="text">
               <string>EditMode</string>
              </property>
@@ -140,6 +342,42 @@
                <height>16777215</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton {
+    background-color: #e0e0e0;  /* Светло-серый фон для обычного состояния */
+    color: #000000;             /* Чёрный текст */
+    border: none;               /* Без границ */
+    border-radius: 4px;         /* Скруглённые углы */
+    padding: 8px 16px;          /* Внутренние отступы */
+    font-size: 14px;            /* Размер текста */
+    font-weight: 500;           /* Средняя толщина текста */
+    text-transform: uppercase;  /* Заглавные буквы */
+    transition: background-color 0.3s ease; /* Плавный переход цвета */
+}
+
+QPushButton:hover {
+    background-color: #d6d6d6;  /* Более тёмный серый при наведении */
+}
+
+QPushButton:checked {
+    background-color: #6200ee;  /* Основной цвет для активного состояния */
+    color: white;               /* Белый текст */
+    border-radius: 4px;         /* Скруглённые углы остаются */
+}
+
+QPushButton:checked:hover {
+    background-color: #3700b3;  /* Тёмно-фиолетовый при наведении в активном состоянии */
+}
+
+QPushButton:pressed {
+    background-color: #bdbdbd;  /* Цвет нажатия */
+}
+
+QPushButton:checked:pressed {
+    background-color: #2a0080;  /* Более тёмный оттенок в активном состоянии при нажатии */
+}
+</string>
+             </property>
              <property name="text">
               <string>MoveMode</string>
              </property>
@@ -153,6 +391,25 @@
                <height>80</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton {
+    background-color: #6200EE; /* Основной цвет Material */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #3700B3; /* Тёмно-фиолетовый при наведении */
+}
+
+QPushButton:pressed {
+    background-color: #BB86FC; /* Светло-фиолетовый при нажатии */
+}
+</string>
+             </property>
              <property name="text">
               <string>CalcAdjacencyMatrix</string>
              </property>
@@ -165,6 +422,25 @@
                <width>140</width>
                <height>80</height>
               </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton {
+    background-color: #6200EE; /* Основной цвет Material */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #3700B3; /* Тёмно-фиолетовый при наведении */
+}
+
+QPushButton:pressed {
+    background-color: #BB86FC; /* Светло-фиолетовый при нажатии */
+}
+</string>
              </property>
              <property name="text">
               <string>GenerateStateMachine</string>
@@ -189,7 +465,82 @@
      <height>21</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
    <widget class="QMenu" name="menu">
+    <property name="styleSheet">
+     <string notr="true">QMenu {
+    background-color: white;
+    margin: 2px; /* some spacing around the menu */
+}
+
+QMenu::item {
+    padding: 2px 25px 2px 20px;
+    border: 1px solid transparent; /* reserve space for selection border */
+}
+
+QMenu::item:selected {
+    border-color: darkblue;
+    background: rgba(100, 100, 100, 150);
+}
+
+QMenu::icon:checked { /* appearance of a 'checked' icon */
+    background: gray;
+    border: 1px inset gray;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    bottom: 1px;
+    left: 1px;
+}
+
+QMenu::separator {
+    height: 2px;
+    background: lightblue;
+    margin-left: 10px;
+    margin-right: 5px;
+}
+
+QMenu::indicator {
+    width: 13px;
+    height: 13px;
+}
+
+/* non-exclusive indicator = check box style indicator (see QActionGroup::setExclusive) */
+QMenu::indicator:non-exclusive:unchecked {
+    image: url(:/images/checkbox_unchecked.png);
+}
+
+QMenu::indicator:non-exclusive:unchecked:selected {
+    image: url(:/images/checkbox_unchecked_hover.png);
+}
+
+QMenu::indicator:non-exclusive:checked {
+    image: url(:/images/checkbox_checked.png);
+}
+
+QMenu::indicator:non-exclusive:checked:selected {
+    image: url(:/images/checkbox_checked_hover.png);
+}
+
+/* exclusive indicator = radio button style indicator (see QActionGroup::setExclusive) */
+QMenu::indicator:exclusive:unchecked {
+    image: url(:/images/radiobutton_unchecked.png);
+}
+
+QMenu::indicator:exclusive:unchecked:selected {
+    image: url(:/images/radiobutton_unchecked_hover.png);
+}
+
+QMenu::indicator:exclusive:checked {
+    image: url(:/images/radiobutton_checked.png);
+}
+
+QMenu::indicator:exclusive:checked:selected {
+    image: url(:/images/radiobutton_checked_hover.png);
+}</string>
+    </property>
     <property name="title">
      <string>Файл</string>
     </property>

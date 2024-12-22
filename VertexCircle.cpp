@@ -92,6 +92,7 @@ void VertexCircle::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     setBrush(QBrush(Qt::yellow));
     QGraphicsEllipseItem::mousePressEvent(
         event);
+}
 
 void VertexCircle::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     setPen(QPen(Qt::blue, 2));

@@ -6,7 +6,6 @@
 class GraphVertex
 {
 public:
-    // GraphVertex(double x, double y);
     GraphVertex(double x, double y, int id, int radius = 20, std::string name = "");
     GraphVertex(const std::shared_ptr<GraphVertex>& vertex);
     GraphVertex(GraphVertex* vertex);

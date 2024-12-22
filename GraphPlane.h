@@ -5,6 +5,7 @@
 #include <QGraphicsScene>
 #include <QWheelEvent>
 #include <QMouseEvent>
+#include <QEnterEvent>
 #include <QPointF>
 
 #include "Graph.h"
@@ -51,7 +52,7 @@ signals:
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect) override;
     void wheelEvent(QWheelEvent *event) override;
-    void enterEvent(QEvent *event) override;
+    void enterEvent(QEnterEvent *event) override;
     void leaveEvent(QEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;

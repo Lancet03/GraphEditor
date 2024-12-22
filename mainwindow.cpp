@@ -10,6 +10,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QRegularExpression>
 #include <memory>
 
 #include "GraphPlane.h"
@@ -147,10 +148,9 @@ void MainWindow::on_GenerateStateMachine_clicked()
 
 void MainWindow::on_CalcAdjacencyMatrix_clicked()
 {
-    if (!this->matrixWindow) {
-        this->matrixWindow = new AdjacencyMatrix(this);
-    }
+    this->matrixWindow = new AdjacencyMatrix(this);
     this->matrixWindow->show();
+    // this->matrixWindow->exec();
     this->graphPlane = this->findChild<GraphPlane*>("graphicsView");
     this->matrixWindow->updateMatrix(this->graphPlane->graph);
     QObject::connect(this->graphPlane, &GraphPlane::graphChanged, matrixWindow, &AdjacencyMatrix::updateMatrix);
@@ -324,7 +324,7 @@ void MainWindow::generateStateMachine() {
     }
 
     QTextStream out(&file);
-    out.setCodec("UTF-8");
+    // out.setCodec("UTF-8");
 
     this->generateCppCode(out);
 
@@ -337,7 +337,7 @@ void MainWindow::generateCppCode(QTextStream& out) {
     auto sanitizeName = [](const std::string &name) {
         QString s = QString::fromStdString(name);
         s.replace(" ", "_");
-        s.remove(QRegExp("[^a-zA-Z0-9_]"));
+        s.remove(QRegularExpression("[^a-zA-Z0-9_]"));
         return s;
     };
 
