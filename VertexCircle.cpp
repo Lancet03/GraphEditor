@@ -19,6 +19,8 @@ VertexCircle::VertexCircle(qreal x, qreal y, qreal radius, Graph *graph,
     this->name = new QGraphicsTextItem(this);
 
     this->name->setParentItem(this);
+    this->name->setDefaultTextColor(Qt::black);
+    this->name->setFont(QFont("Arial", 14, QFont::Bold, true));
     this->name->setAcceptedMouseButtons(Qt::NoButton);
     this->name->setPlainText("");
     this->updateNamePosition();
@@ -33,6 +35,9 @@ VertexCircle::VertexCircle(GraphVertex *vertex, Graph *graph,
     this->SetStartParameters();
 
     this->name = new QGraphicsTextItem(this);
+    this->name->setParentItem(this);
+    this->name->setDefaultTextColor(Qt::black);
+    this->name->setFont(QFont("Arial", 14, QFont::Bold, true));
     this->name->setAcceptedMouseButtons(Qt::NoButton);
     name->setPlainText(QString::fromStdString(vertex->GetName()));
     this->updateNamePosition();
@@ -42,8 +47,19 @@ void VertexCircle::SetStartParameters() {
     setRect(this->vertex->xPos - this->m_radius,
             this->vertex->yPos - this->m_radius, 2 * this->m_radius,
             2 * this->m_radius);
-    setPen(QPen(Qt::blue, 2));
-    setBrush(QBrush(Qt::cyan));
+    // setPen(QPen(Qt::blue, 2));
+    // setBrush(QBrush(Qt::cyan));
+    // Устанавливаем цвет заливки (QBrush)
+    // Создаём вершину с заливкой и обводкой
+    this->fillColor =  QColor("#4CAF50");  // Зелёный
+    this->borderColor = QColor("#2E7D32"); // Тёмно-зелёный
+    fillColor.setAlpha(255); // Убедитесь, что заливка непрозрачная
+    setBrush(QBrush(fillColor));
+
+    // Устанавливаем цвет обводки (QPen)
+    QPen pen(borderColor);
+    pen.setWidth(2); // Толщина обводки
+    setPen(pen);
     setFlags(QGraphicsItem::ItemIsSelectable);
     this->setData(0, "VertexCircle");
 }
@@ -95,8 +111,10 @@ void VertexCircle::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void VertexCircle::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    setPen(QPen(Qt::blue, 2));
-    setBrush(QBrush(Qt::cyan));
+    // setPen(QPen(Qt::blue, 2));
+    // setBrush(QBrush(Qt::cyan));
+    setPen(this->borderColor);
+    setBrush(this->fillColor);
     QGraphicsEllipseItem::mouseReleaseEvent(
         event);
 }
@@ -149,12 +167,16 @@ void VertexCircle::paint(QPainter *painter,
     bool isSelected = option->state & QStyle::State_Selected;
 
     if (isSelected) {
-        painter->setPen(
-            QPen(Qt::red, 3, Qt::DashLine));
-        painter->setBrush(QBrush(Qt::yellow));
+        // painter->setPen(
+        //     QPen(Qt::red, 3, Qt::DashLine));
+        painter->setPen(QPen(QColor("#6200EE"), 2));
+        painter->setBrush(this->fillColor);
+        // painter->setBrush(QBrush(Qt::yellow));
     } else {
-        painter->setPen(QPen(Qt::blue, 2));
-        painter->setBrush(QBrush(Qt::cyan));
+        // painter->setPen(QPen(Qt::blue, 2));
+        // painter->setBrush(QBrush(Qt::cyan));
+        painter->setPen(this->borderColor);
+        painter->setBrush(this->fillColor);
     }
 
     painter->drawEllipse(rect());

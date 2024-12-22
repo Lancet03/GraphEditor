@@ -62,19 +62,6 @@
         <property name="spacing">
          <number>0</number>
         </property>
-        <item row="2" column="0">
-         <widget class="GraphPlane" name="graphicsView">
-          <property name="focusPolicy">
-           <enum>Qt::FocusPolicy::StrongFocus</enum>
-          </property>
-          <property name="autoFillBackground">
-           <bool>false</bool>
-          </property>
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="0">
          <widget class="QWidget" name="instrumentsWidget" native="true">
           <property name="minimumSize">
@@ -94,16 +81,16 @@
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <property name="spacing">
-            <number>0</number>
+            <number>10</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="topMargin">
             <number>0</number>
            </property>
            <property name="rightMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="bottomMargin">
             <number>0</number>
@@ -112,13 +99,13 @@
             <widget class="QPushButton" name="AddEdges">
              <property name="minimumSize">
               <size>
-               <width>140</width>
+               <width>80</width>
                <height>80</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>100</width>
+               <width>80</width>
                <height>16777215</height>
               </size>
              </property>
@@ -159,7 +146,17 @@ QPushButton:checked:pressed {
 </string>
              </property>
              <property name="text">
-              <string>addEdge</string>
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="assets.qrc">
+               <normaloff>:/assets/img/edge.svg</normaloff>:/assets/img/edge.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>60</width>
+               <height>60</height>
+              </size>
              </property>
             </widget>
            </item>
@@ -167,13 +164,13 @@ QPushButton:checked:pressed {
             <widget class="QPushButton" name="AddVertexes">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>80</width>
                <height>80</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>140</width>
+               <width>80</width>
                <height>16777215</height>
               </size>
              </property>
@@ -214,7 +211,17 @@ QPushButton:checked:pressed {
 </string>
              </property>
              <property name="text">
-              <string>addVertex</string>
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="assets.qrc">
+               <normaloff>:/assets/img/vertex.svg</normaloff>:/assets/img/vertex.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>60</width>
+               <height>60</height>
+              </size>
              </property>
             </widget>
            </item>
@@ -222,13 +229,13 @@ QPushButton:checked:pressed {
             <widget class="QPushButton" name="ViewMode">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>80</width>
                <height>80</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>140</width>
+               <width>80</width>
                <height>16777215</height>
               </size>
              </property>
@@ -269,7 +276,17 @@ QPushButton:checked:pressed {
 </string>
              </property>
              <property name="text">
-              <string>viewMode</string>
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="assets.qrc">
+               <normaloff>:/assets/img/view.svg</normaloff>:/assets/img/view.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>60</width>
+               <height>60</height>
+              </size>
              </property>
             </widget>
            </item>
@@ -277,13 +294,13 @@ QPushButton:checked:pressed {
             <widget class="QPushButton" name="EditMode">
              <property name="minimumSize">
               <size>
-               <width>0</width>
+               <width>80</width>
                <height>80</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>140</width>
+               <width>80</width>
                <height>16777215</height>
               </size>
              </property>
@@ -324,7 +341,17 @@ QPushButton:checked:pressed {
 </string>
              </property>
              <property name="text">
-              <string>EditMode</string>
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="assets.qrc">
+               <normaloff>:/assets/img/edit.svg</normaloff>:/assets/img/edit.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>60</width>
+               <height>60</height>
+              </size>
              </property>
             </widget>
            </item>
@@ -332,13 +359,13 @@ QPushButton:checked:pressed {
             <widget class="QPushButton" name="MoveMode">
              <property name="minimumSize">
               <size>
-               <width>0</width>
+               <width>80</width>
                <height>80</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>140</width>
+               <width>80</width>
                <height>16777215</height>
               </size>
              </property>
@@ -379,16 +406,39 @@ QPushButton:checked:pressed {
 </string>
              </property>
              <property name="text">
-              <string>MoveMode</string>
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="assets.qrc">
+               <normaloff>:/assets/img/move.svg</normaloff>:/assets/img/move.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>70</width>
+               <height>70</height>
+              </size>
              </property>
             </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
            <item>
             <widget class="QPushButton" name="CalcAdjacencyMatrix">
              <property name="maximumSize">
               <size>
-               <width>140</width>
-               <height>80</height>
+               <width>90</width>
+               <height>90</height>
               </size>
              </property>
              <property name="styleSheet">
@@ -411,7 +461,17 @@ QPushButton:pressed {
 </string>
              </property>
              <property name="text">
-              <string>CalcAdjacencyMatrix</string>
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="assets.qrc">
+               <normaloff>:/assets/img/matrix.svg</normaloff>:/assets/img/matrix.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>60</width>
+               <height>60</height>
+              </size>
              </property>
             </widget>
            </item>
@@ -419,8 +479,8 @@ QPushButton:pressed {
             <widget class="QPushButton" name="GenerateStateMachine">
              <property name="maximumSize">
               <size>
-               <width>140</width>
-               <height>80</height>
+               <width>90</width>
+               <height>90</height>
               </size>
              </property>
              <property name="styleSheet">
@@ -443,11 +503,34 @@ QPushButton:pressed {
 </string>
              </property>
              <property name="text">
-              <string>GenerateStateMachine</string>
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="assets.qrc">
+               <normaloff>:/assets/img/state-machine.svg</normaloff>:/assets/img/state-machine.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>70</width>
+               <height>71</height>
+              </size>
              </property>
             </widget>
            </item>
           </layout>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="GraphPlane" name="graphicsView">
+          <property name="focusPolicy">
+           <enum>Qt::FocusPolicy::StrongFocus</enum>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
          </widget>
         </item>
        </layout>

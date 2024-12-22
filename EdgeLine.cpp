@@ -21,6 +21,8 @@ EdgeLine::EdgeLine(VertexCircle *start, VertexCircle *end, Graph *graph,
     this->SetStartParameters();
 
     this->name = new QGraphicsTextItem(this);
+    this->name->setDefaultTextColor(Qt::black);
+    this->name->setFont(QFont("Arial", 12, QFont::Bold, true));
     this->name->setPlainText("");
 
     updatePosition();
@@ -38,6 +40,8 @@ EdgeLine::EdgeLine(GraphEdge *edge, VertexCircle *start, VertexCircle *end,
     this->SetStartParameters();
 
     this->name = new QGraphicsTextItem(this);
+    this->name->setDefaultTextColor(Qt::black);
+    this->name->setFont(QFont("Arial", 12, QFont::Bold, true));
     this->name->setPlainText(QString::fromStdString(edge->GetName()));
 
     updatePosition();

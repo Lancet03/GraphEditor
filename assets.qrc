@@ -3,5 +3,12 @@
         <file>img/graph.svg</file>
         <file>icons/GraphIcon.ico</file>
         <file>icons/GraphIcon.svg</file>
+        <file>img/state-machine.svg</file>
+        <file>img/matrix.svg</file>
+        <file>img/move.svg</file>
+        <file>img/view.svg</file>
+        <file>img/vertex.svg</file>
+        <file>img/edge.svg</file>
+        <file>img/edit.svg</file>
     </qresource>
 </RCC>

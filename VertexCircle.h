@@ -55,6 +55,9 @@ private:
     void updateNamePosition();
     void SetStartParameters();
     void editName();
+
+    QColor fillColor;
+    QColor borderColor;
 };
 
 #endif // VERTEXCIRCLE_H
