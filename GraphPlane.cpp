@@ -120,10 +120,6 @@ void GraphPlane::mousePressEvent(QMouseEvent *event) {
 
                     firstSelectedCircle = nullptr;
                     secondSelectedCircle = nullptr;
-                } else {
-                    firstSelectedCircle = nullptr;
-                    secondSelectedCircle = nullptr;
-                    this->RemoveTempLine();
                 }
             }
         } else if (this->mode == Mode::ADD_VERTEXES) {
