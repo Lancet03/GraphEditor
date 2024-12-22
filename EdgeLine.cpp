@@ -50,6 +50,14 @@ EdgeLine::EdgeLine(GraphEdge *edge, VertexCircle *start, VertexCircle *end,
     endVertex->addEdge(this);
 }
 
+EdgeLine::EdgeLine(VertexCircle *start, QGraphicsItem *parent): QGraphicsLineItem(parent), startVertex(start) {
+    this->SetStartParameters();
+    this->endPos = start->boundingRect().center();
+    this->isTemporary = true;
+    this->setData(0, "TempEdgeLine");
+    updatePosition();
+}
+
 void EdgeLine::SetStartParameters() {
     setPen(QPen(Qt::black, 2));
     this->setData(0, "EdgeLine");
@@ -57,21 +65,31 @@ void EdgeLine::SetStartParameters() {
 
 void EdgeLine::updatePosition() {
     this->prepareGeometryChange();
+    QPointF endCenter;
+    qreal endRadius;
+    QPointF endPoint;
+    QLineF line;
 
     QPointF startCenter = startVertex->sceneBoundingRect().center();
-    QPointF endCenter = endVertex->sceneBoundingRect().center();
-
-    QLineF line(startCenter, endCenter);
-
     qreal startRadius = startVertex->getRadius();
-    qreal endRadius = endVertex->getRadius();
+    if (!this->isTemporary) {
+        endCenter = endVertex->sceneBoundingRect().center();
+        endRadius = endVertex->getRadius();
+        line = QLineF(startCenter, endCenter);
+        endPoint = line.pointAt(1.0 - (endRadius / line.length()));
+    } else {
+        line = QLineF(startCenter, endPos);
+        endPoint = line.pointAt(1.0 - (3 / line.length()));
+    }
 
     QPointF startPoint = line.pointAt(startRadius / line.length());
-    QPointF endPoint = line.pointAt(1.0 - (endRadius / line.length()));
 
     setLine(QLineF(startPoint, endPoint));
 
-    this->updateNamePosition();
+    if (!this->isTemporary) {
+        this->updateNamePosition();
+    }
+
     this->update();
 }
 
@@ -84,6 +102,11 @@ void EdgeLine::setName(const QString &name) {
 }
 
 QString EdgeLine::getName() const { return this->name->toPlainText(); }
+
+void EdgeLine::SetEndPos(QPointF point) {
+    this->endPos = point;
+    this->updatePosition();
+}
 
 void EdgeLine::updateNamePosition() {
     QLineF line = this->line();

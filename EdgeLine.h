@@ -16,6 +16,7 @@ class EdgeLine : public QObject, public QGraphicsLineItem
 public:
     explicit EdgeLine(VertexCircle *start, VertexCircle *end, Graph* graph, QGraphicsItem *parent = nullptr);
     explicit EdgeLine(GraphEdge* edge, VertexCircle *start, VertexCircle *end,  Graph* graph, QGraphicsItem *parent = nullptr);
+    explicit EdgeLine(VertexCircle *start, QGraphicsItem *parent = nullptr);
 
     void updatePosition();
     GraphEdge* edge;
@@ -27,6 +28,8 @@ public:
 
     void setName(const QString &name);
     QString getName() const;
+
+    void SetEndPos(QPointF);
 signals:
     void stateChanged();
 
@@ -40,6 +43,10 @@ private:
     void updateNamePosition();
     void editName();
     void SetStartParameters();
+
+    bool isTemporary = false;
+    QPointF endPos;
+
 };
 
 #endif // EDGELINE_H

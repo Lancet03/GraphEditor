@@ -30,13 +30,15 @@ public:
     QList<EdgeLine*> edgeLines;
     EdgeLine* AddEdge(VertexCircle *start, VertexCircle *end);
     EdgeLine* AddEdge(std::shared_ptr<GraphEdge> edge);
+    EdgeLine* AddTempLine(VertexCircle * start);
+    void RemoveTempLine();
     EdgeLine* RegisterEdge(EdgeLine* edgeLine);
     void RemoveEdge(EdgeLine* edge);
 
     qreal getCurrentScale() const;
     Graph* graph;
     Graph* SetGraph(Graph* g);
-    void SetMode(Mode m) { this->mode = m; };
+    void SetMode(Mode m);
     Mode GetMode(Mode m) { return this->mode; };
 
     VertexCircle* GetVertexById(int id);
@@ -64,7 +66,7 @@ private:
     QGraphicsScene *scene;
     VertexCircle *firstSelectedCircle = nullptr;
     VertexCircle *secondSelectedCircle = nullptr;
-    QGraphicsLineItem *tempLine = nullptr;
+    EdgeLine *tempLine = nullptr;
 
     VertexCircle* selectedCircle = nullptr;
 

@@ -71,6 +71,13 @@ VertexCircle *GraphPlane::GetVertexById(int id) {
     return nullptr;
 }
 
+void GraphPlane::SetMode(Mode m) {
+    this->mode = m;
+    this->selectedCircle = nullptr;
+    this->firstSelectedCircle = nullptr;
+    this->secondSelectedCircle = nullptr;
+}
+
 void GraphPlane::mousePressEvent(QMouseEvent *event) {
     // Преобразуем координаты клика в координаты сцены
     QPointF scenePos = mapToScene(event->pos());
@@ -97,23 +104,33 @@ void GraphPlane::mousePressEvent(QMouseEvent *event) {
                 if (!this->firstSelectedCircle) {
                     firstSelectedCircle = selectedVertex;
                     firstSelectedCircle->setPen(QPen(Qt::green, 3));
+                    this->AddTempLine(selectedVertex);
                 } else if (!secondSelectedCircle) {
+                    if (firstSelectedCircle->vertex->id == selectedVertex->vertex->id) {
+                        firstSelectedCircle = nullptr;
+                        secondSelectedCircle = nullptr;
+                        this->RemoveTempLine();
+                        QGraphicsView::mousePressEvent(event);
+                        return;
+                    }
                     secondSelectedCircle = selectedVertex;
-                    secondSelectedCircle->setPen(
-                        QPen(Qt::green, 3)); // Указываем, что кружок выбран
 
                     // Соединяем два выбранных кружка
                     this->AddEdge(firstSelectedCircle, secondSelectedCircle);
 
-                    // Сбрасываем выбор
-                    firstSelectedCircle->setPen(QPen(Qt::blue, 2));
-                    secondSelectedCircle->setPen(QPen(Qt::blue, 2));
                     firstSelectedCircle = nullptr;
                     secondSelectedCircle = nullptr;
+                } else {
+                    firstSelectedCircle = nullptr;
+                    secondSelectedCircle = nullptr;
+                    this->RemoveTempLine();
                 }
             }
         } else if (this->mode == Mode::ADD_VERTEXES) {
             this->AddVertex(scenePos);
+        } else if (this->mode == Mode::ADD_EDGES) {
+            this->RemoveTempLine();
+            this->firstSelectedCircle = nullptr;
         }
     } else if (event->button() == Qt::RightButton) {
         // Проверяем, есть ли объект под курсором
@@ -139,9 +156,6 @@ void GraphPlane::mousePressEvent(QMouseEvent *event) {
         this->isDragging = true;
         // по нажатию средней кнопки мыши создаем событие ее отпускания выставляем
         // моду перетаскивания и создаем событие зажатой левой кнопки мыши
-        // QMouseEvent releaseEvent(QEvent::MouseButtonRelease, event->localPos(),
-        //                          event->screenPos(), event->windowPos(),
-        //                          Qt::LeftButton, nullptr, event->modifiers());
         QMouseEvent releaseEvent(
             QEvent::MouseButtonPress,
             event->position(),
@@ -210,6 +224,10 @@ void GraphPlane::RemoveVertex(VertexCircle *vertex) {
 }
 
 EdgeLine *GraphPlane::AddEdge(VertexCircle *start, VertexCircle *end) {
+    if (this->tempLine) {
+        this->scene->removeItem(this->tempLine);
+        this->tempLine = nullptr;
+    }
     std::shared_ptr<GraphEdge> graphEdge =
         this->graph->addEdge(start->vertex->id, end->vertex->id);
 
@@ -219,6 +237,10 @@ EdgeLine *GraphPlane::AddEdge(VertexCircle *start, VertexCircle *end) {
 }
 
 EdgeLine *GraphPlane::AddEdge(std::shared_ptr<GraphEdge> edge) {
+    if (this->tempLine) {
+        this->scene->removeItem(this->tempLine);
+        this->tempLine = nullptr;
+    }
     GraphVertex *from = edge->from.get();
     GraphVertex *to = edge->to.get();
 
@@ -228,6 +250,17 @@ EdgeLine *GraphPlane::AddEdge(std::shared_ptr<GraphEdge> edge) {
     EdgeLine *edgeLine = new EdgeLine(edge.get(), start, end, this->graph);
 
     return this->RegisterEdge(edgeLine);
+}
+
+EdgeLine* GraphPlane::AddTempLine(VertexCircle * start) {
+    this->tempLine = new EdgeLine(start);
+    this->scene->addItem(tempLine);
+    return this->tempLine;
+}
+
+void GraphPlane::RemoveTempLine() {
+    this->scene->removeItem(this->tempLine);
+    this->tempLine = nullptr;
 }
 
 EdgeLine *GraphPlane::RegisterEdge(EdgeLine *edgeLine) {
@@ -247,7 +280,9 @@ void GraphPlane::RemoveEdge(EdgeLine *edge) {
         edge->endVertex->removeEdge(edge);
     }
     this->scene->removeItem(edge);
-    this->graph->removeEdge(edge->edge);
+    if (edge->edge) {
+        this->graph->removeEdge(edge->edge);
+    }
     emit graphChanged(this->graph);
 }
 
@@ -327,6 +362,9 @@ void GraphPlane::mouseMoveEvent(QMouseEvent *event) {
             QPointF p = mapToScene(event->pos());
             this->selectedCircle->moveTo(p);
         }
+    }
+    if (this->mode == Mode::ADD_EDGES && this->tempLine) {
+        this->tempLine->SetEndPos(mapToScene(event->pos()));
     }
 
     QGraphicsView::mouseMoveEvent(event);
