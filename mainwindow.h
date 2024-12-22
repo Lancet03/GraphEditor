@@ -56,6 +56,7 @@ private:
     QLabel *mousePosLabel;  // Метка для координат
     QLabel *zoomLevelLabel; // Метка для уровня зума
 
+    QString sanitizeName(std::string name);
     void generateStateMachine();
     void generateCppCode(QTextStream& out);
     void saveGraph();

@@ -30,7 +30,6 @@ MainWindow::MainWindow(QWidget *parent)
     QPushButton* editModeBtn = this->findChild<QPushButton*>("EditMode");
     QPushButton* moveModeBtn = this->findChild<QPushButton*>("MoveMode");
 
-    // Создаем QButtonGroup и связываем кнопки
     QButtonGroup *buttonGroup = new QButtonGroup(this);
     buttonGroup->addButton(addVertexesModeBtn, 1);
     buttonGroup->addButton(addEdgesModeBtn, 2);
@@ -39,7 +38,6 @@ MainWindow::MainWindow(QWidget *parent)
     buttonGroup->addButton(moveModeBtn, 5);
 
 
-    // Устанавливаем checkable для кнопок
     addVertexesModeBtn->setCheckable(true);
     addEdgesModeBtn->setCheckable(true);
     viewModeBtn->setCheckable(true);
@@ -48,18 +46,16 @@ MainWindow::MainWindow(QWidget *parent)
 
     viewModeBtn->setChecked(true);
 
-    // Создаем метки для отображения данных
     mousePosLabel = new QLabel("Cursor: (0, 0)", this);
     zoomLevelLabel = new QLabel("Zoom: 1.00x", this);
 
-    // Добавляем метки в статусную строку
     statusBar()->addWidget(mousePosLabel);
     statusBar()->addPermanentWidget(zoomLevelLabel);
 
-    // Подключаем сигналы от GraphPlane к слотам
+
     connect(graphPlane, &GraphPlane::mousePositionChanged, this, &MainWindow::updateMousePosition);
     connect(graphPlane, &GraphPlane::zoomLevelChanged, this, &MainWindow::updateZoomLevel);
-    // Подключение сигналов для входа/выхода курсора
+
     connect(graphPlane, &GraphPlane::mouseEntered, this, &MainWindow::onMouseEntered);
     connect(graphPlane, &GraphPlane::mouseLeft, this, &MainWindow::onMouseLeft);
 }
@@ -71,13 +67,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::updateMousePosition(const QPointF &pos)
 {
-    // Форматируем координаты и обновляем метку
     mousePosLabel->setText(QString("Cursor: (%1, %2)").arg(pos.x(), 0, 'f', 2).arg(-pos.y(), 0, 'f', 2));
 }
 
 void MainWindow::updateZoomLevel(qreal scale)
 {
-    // Форматируем масштаб и обновляем метку
     zoomLevelLabel->setText(QString("Zoom: %1x").arg(scale, 0, 'f', 2));
 }
 
@@ -150,33 +144,28 @@ void MainWindow::on_CalcAdjacencyMatrix_clicked()
 {
     this->matrixWindow = new AdjacencyMatrix(this);
     this->matrixWindow->show();
-    // this->matrixWindow->exec();
     this->graphPlane = this->findChild<GraphPlane*>("graphicsView");
     this->matrixWindow->updateMatrix(this->graphPlane->graph);
     QObject::connect(this->graphPlane, &GraphPlane::graphChanged, matrixWindow, &AdjacencyMatrix::updateMatrix);
 }
 
 void MainWindow::saveGraph() {
-    // Открываем диалог для выбора файла
     QString fileName = QFileDialog::getSaveFileName(
         nullptr,
-        "Сохранить граф",           // Заголовок окна
-        "",                     // Начальная папка
-        "JSON Files (*.json)"   // Фильтры типов файлов
+        "Сохранить граф",
+        "",
+        "JSON Files (*.json)"
         );
 
-    // Проверяем, был ли файл выбран
     if (fileName.isEmpty()) {
         QMessageBox::information(nullptr, "Save Graph", "Файл не выбран!");
         return;
     }
 
-    // Добавляем расширение, если его нет
     if (!fileName.endsWith(".json", Qt::CaseInsensitive)) {
         fileName += ".json";
     }
 
-    // Пример данных для сохранения
     QJsonObject graphJson;
 
     QJsonArray vertexesArray;
@@ -194,7 +183,6 @@ void MainWindow::saveGraph() {
     }
     graphJson["vertexes"] = vertexesArray;
 
-    // Сериализация рёбер
     QJsonArray edgesArray;
     for (const auto &edge : this->graphPlane->graph->edges) {
         QJsonObject edgeJson;
@@ -206,50 +194,42 @@ void MainWindow::saveGraph() {
     }
     graphJson["edges"] = edgesArray;
 
-    // Конвертируем JSON-объект в строку
     QJsonDocument jsonDoc(graphJson);
 
-    // Открываем файл для записи
     QFile file(fileName);
     if (!file.open(QIODevice::WriteOnly)) {
         QMessageBox::critical(nullptr, "Error", "Cannot open file for writing!");
         return;
     }
 
-    // Записываем JSON в файл
-    file.write(jsonDoc.toJson(QJsonDocument::Indented)); // Читаемый формат
+    file.write(jsonDoc.toJson(QJsonDocument::Indented));
     file.close();
 
     QMessageBox::information(nullptr, "Save Graph", "Graph saved successfully!");
 }
 
 void MainWindow::loadGraphFromJson() {
-    // Открываем диалог для выбора файла
     QString fileName = QFileDialog::getOpenFileName(
         nullptr,
-        "Load Graph",              // Заголовок окна
-        "",                        // Начальная папка
-        "JSON Files (*.json)"      // Фильтр типов файлов
+        "Load Graph",
+        "",
+        "JSON Files (*.json)"
         );
 
-    // Проверяем, был ли файл выбран
     if (fileName.isEmpty()) {
         QMessageBox::information(nullptr, "Load Graph", "No file selected!");
         return;
     }
 
-    // Открываем файл для чтения
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly)) {
         QMessageBox::critical(nullptr, "Error", "Cannot open file for reading!");
         return;
     }
 
-    // Считываем содержимое файла
     QByteArray data = file.readAll();
     file.close();
 
-    // Парсим JSON
     QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
     if (jsonDoc.isNull() || !jsonDoc.isObject()) {
         QMessageBox::critical(nullptr, "Error", "Invalid JSON format!");
@@ -258,10 +238,8 @@ void MainWindow::loadGraphFromJson() {
 
     QJsonObject graphJson = jsonDoc.object();
 
-    // this->graphPlane->ClearGraph();
     Graph* g = new Graph();
 
-    // Десериализация вершин
     QJsonArray vertexesArray = graphJson["vertexes"].toArray();
     QMap<int, GraphVertex*> idToVertexMap;
     for (const QJsonValue &value : vertexesArray) {
@@ -272,14 +250,12 @@ void MainWindow::loadGraphFromJson() {
         qreal radius = vertexJson["radius"].toDouble();
         QString name = vertexJson["name"].toString();
 
-        // Создаём вершину
         GraphVertex* vertex = new GraphVertex(x, y, id, radius);
         vertex->SetName(name.toStdString());
         idToVertexMap[id] = vertex;
         g->addVertex(vertex);
     }
 
-    // Десериализация рёбер
     QJsonArray edgesArray = graphJson["edges"].toArray();
     for (const QJsonValue &value : edgesArray) {
         QJsonObject edgeJson = value.toObject();
@@ -288,12 +264,10 @@ void MainWindow::loadGraphFromJson() {
         double weight = edgeJson["weight"].toDouble();
         QString name = edgeJson["name"].toString();
 
-        // Получаем ссылки на начальную и конечную вершины
         GraphVertex* startVertex = idToVertexMap.value(startVertexId, nullptr);
         GraphVertex* endVertex = idToVertexMap.value(endVertexId, nullptr);
 
         if (startVertex && endVertex) {
-            // Создаём ребро
             GraphEdge* edge = new GraphEdge(std::make_shared<GraphVertex>(startVertex), std::make_shared<GraphVertex>(endVertex));
             edge->SetName(name.toStdString());
             edge->SetWeight(weight);
@@ -308,11 +282,9 @@ void MainWindow::loadGraphFromJson() {
 }
 
 void MainWindow::generateStateMachine() {
-    // QString targetFilePath = filePath;
     QString targetFilePath = QFileDialog::getSaveFileName(
         nullptr, "Save State Machine", "", "C++ Files (*.cpp)");
 
-    // Если файл не выбран, выходим
     if (targetFilePath.isEmpty()) {
         return;
     }
@@ -324,7 +296,6 @@ void MainWindow::generateStateMachine() {
     }
 
     QTextStream out(&file);
-    // out.setCodec("UTF-8");
 
     this->generateCppCode(out);
 
@@ -332,17 +303,6 @@ void MainWindow::generateStateMachine() {
 }
 
 void MainWindow::generateCppCode(QTextStream& out) {
-
-    // Предположим, что у вас есть функция sanitizeName, которая преобразует имя в валидный идентификатор
-    auto sanitizeName = [](const std::string &name) {
-        QString s = QString::fromStdString(name);
-        s.replace(" ", "_");
-        s.remove(QRegularExpression("[^a-zA-Z0-9_]"));
-        return s;
-    };
-
-    // Собираем списки состояний (вершин) и событий (рёбер)
-    // Считаем, что каждая вершина - это состояние, а каждое ребро - это событие
     QStringList stateNames;
 
     std::vector<std::shared_ptr<GraphVertex>> vertexes = this->graphPlane->graph->vertexes;
@@ -357,12 +317,10 @@ void MainWindow::generateCppCode(QTextStream& out) {
         eventNames << sanitizeName(edge->GetName());
     }
 
-    // Печатаем заголовки и инфраструктуру
     out << "#include <iostream>\n";
     out << "#include <variant>\n";
     out << "#include <stdexcept>\n\n";
 
-    // Генерируем namespace state
     out << "namespace state {\n";
     for (const auto& st : stateNames) {
         out << "    struct " << st << " {\n";
@@ -372,18 +330,16 @@ void MainWindow::generateCppCode(QTextStream& out) {
         out << "        }\n";
         out << "    };\n\n";
     }
-    out << "} // namespace state\n\n";
+    out << "}\n\n";
 
-    // Генерируем namespace event
     out << "namespace event {\n";
     for (const auto& ev : eventNames) {
         out << "    struct " << ev << " {\n";
         out << QString::fromUtf8("        // Добавьте поля события при необходимости\n");
         out << "    };\n\n";
     }
-    out << "} // namespace event\n\n";
+    out << "}\n\n";
 
-    // Генерируем using для состояний и событий
     out << "using StateVariant = std::variant";
     out << "<";
     for (int i = 0; i < stateNames.size(); ++i) {
@@ -400,21 +356,11 @@ void MainWindow::generateCppCode(QTextStream& out) {
     }
     out << ">;\n\n";
 
-    // Генерируем onEvent функции
-    // Нам нужно определить переходы: у нас есть edges, каждый edge имеет startState, endState, eventName
-    // Предположим, что edge->getStartCircle() и getEndCircle() дают нам состояния,
-    // а edge->getName() - это событие.
-    // Мы создадим onEvent для каждого перехода: onEvent(const startState&, const event&) {return endState;}
-    // Если нужен сложный переход - добавьте логику.
-
-    // Сначала объявим шаблонную заглушку:
     out << "template<typename State, typename Event>\n";
     out << "StateVariant onEvent(const State&, const Event&) {\n";
     out << "    throw std::logic_error{\"Unsupported state transition\"};\n";
     out << "}\n\n";
 
-    // Теперь перегрузки для конкретных переходов
-    // Для каждого ребра: (startState, event) -> endState
     for (const auto& edge : edges) {
         QString startState = sanitizeName(edge->from->GetName());
         QString endState = sanitizeName(edge->to->GetName());
@@ -426,7 +372,6 @@ void MainWindow::generateCppCode(QTextStream& out) {
         out << "}\n\n";
     }
 
-    // Лямбда для вызова onEvent через visit
     out << "auto StateReporter = [](const auto& s){ s.PrintState(); };\n";
     out << "auto EventProcessor = [](const auto& st, const auto& ev) { return onEvent(st, ev); };\n\n";
 
@@ -437,7 +382,6 @@ void MainWindow::generateCppCode(QTextStream& out) {
     out << "public:\n";
     out << "    void startMachine() {\n";
     if (!stateNames.isEmpty()) {
-        // Начинаем с первого состояния?
         out << "        state_ = state::" << stateNames.first() << "{};\n";
     } else {
         out << "        // Нет состояний\n";
@@ -453,23 +397,31 @@ void MainWindow::generateCppCode(QTextStream& out) {
     out << "    }\n";
     out << "};\n\n";
 
-    // Генерируем main
     out << "int main() {\n";
     out << "    StateMachine sm;\n";
     out << "    sm.startMachine();\n";
     out << "    sm.reportCurrentState();\n\n";
-
-    // Пример: просто вызываем пару переходов, если есть
     if (!edges.empty()) {
         out << "    // Example usage:\n";
+        out << "    try {";
         for (const auto& edge : edges) {
             QString eventName = sanitizeName(edge->GetName());
             out << "    sm.processEvent(event::" << eventName << "{});\n";
             out << "    sm.reportCurrentState();\n";
         }
+        out << "    }\n";
+        out << "    catch(std::exception &ex) {\n";
+        out << "        std::cout << \"Exception: \" << ex.what() << std::endl;\n";
+        out << "    }\n";
     }
-
     out << "    return 0;\n";
     out << "}\n";
+}
+
+QString MainWindow::sanitizeName(std::string name) {
+    QString s = QString::fromStdString(name);
+    s.replace(" ", "_");
+    s.remove(QRegularExpression("[^a-zA-Zа-яА-я0-9_]"));
+    return s;
 }
 
