@@ -11,7 +11,6 @@
 #include <QWheelEvent>
 
 #include <cmath>
-#include <typeinfo>
 
 GraphPlane::GraphPlane(QWidget *parent)
     : QGraphicsView(parent), currentScale(1.0) {

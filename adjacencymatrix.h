@@ -22,7 +22,7 @@ public:
 
 private:
     Ui::AdjacencyMatrix *ui;
-    QTableWidget* table; // Таблица для отображения матрицы
+    QTableWidget* table;
 };
 
 #endif // ADJACENCYMATRIX_H
