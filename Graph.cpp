@@ -115,7 +115,7 @@ std::vector<std::vector<double>> Graph::BuildCorrespMatrix() {
 
 double Graph::GetEdgeWeigth(std::shared_ptr<GraphVertex> from, std::shared_ptr<GraphVertex> to) {
     for (int i = 0; i < (int)this->edges.size(); i++) {
-        if (from == this->edges[i]->from && to == this->edges[i]->to) {
+        if (from->id == this->edges[i]->from->id && to->id == this->edges[i]->to->id) {
             return this->edges[i]->weight;
         }
     }
